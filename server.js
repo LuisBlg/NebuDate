@@ -15,7 +15,7 @@ const OWNER_IPS = [
   '2a02:8428:141c:a201:ec78:9355:bafa:4487',
 ];
 
-const OWNER_NAME = 'Louis';
+const OWNER_NAME = 'Assistant virtuel';
 
 // ── Stockage (Datastore si dispo, sinon mémoire) ─────
 let useDatastore = false;

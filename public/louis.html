@@ -94,14 +94,12 @@
 
     /* Corps calendrier */
     #cal-body {
-      flex:1; overflow-y:auto; overflow-x:hidden;
+      flex:1; overflow:hidden;
+      display:flex; flex-direction:column;
     }
-    #cal-body::-webkit-scrollbar { width:3px; }
-    #cal-body::-webkit-scrollbar-track { background:transparent; }
-    #cal-body::-webkit-scrollbar-thumb { background:rgba(154,220,255,.15); border-radius:2px; }
 
     /* Semaine */
-    .cal-week { border-bottom:1px solid rgba(154,220,255,.05); }
+    .cal-week { flex:1; display:flex; flex-direction:column; border-bottom:1px solid rgba(154,220,255,.05); }
     .cal-week:last-child { border-bottom:none; }
 
     /* Barre d'événements multi-jours */
@@ -124,10 +122,10 @@
 
     /* Cellules jours */
     .cal-week-days {
-      display:grid; grid-template-columns:repeat(7,1fr);
+      flex:1; display:grid; grid-template-columns:repeat(7,1fr);
     }
     .cal-day-cell {
-      min-height:70px; padding:.3rem .35rem;
+      min-height:0; padding:.3rem .35rem;
       border-right:1px solid rgba(154,220,255,.05);
       cursor:none !important; position:relative;
       transition:background .15s;
@@ -371,7 +369,8 @@
 
     /* ── Coccinelle ── */
     #cursor-bug { position:fixed; pointer-events:none; z-index:99999; top:0; left:0; width:0; height:0; }
-    #bug-body { position:absolute; transform:translate(-50%,-28%); will-change:transform; }
+    #bug-body { position:absolute; transform:translate(-50%,-28%); will-change:transform; pointer-events:none; }
+    #bug-body svg { pointer-events:none; }
     .fw { opacity:0; transition:opacity .12s ease; }
     .fw-l { transform-box:fill-box; transform-origin:right center; }
     .fw-r { transform-box:fill-box; transform-origin:left center; }
@@ -493,7 +492,7 @@
 <!-- COCCINELLE -->
 <div id="cursor-bug">
   <div id="bug-body">
-    <svg viewBox="0 0 80 64" width="76" height="70" style="overflow:visible" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 80 64" width="76" height="70" style="overflow:visible;pointer-events:none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="es2" cx="38%" cy="28%" r="62%">
           <stop offset="0%" stop-color="rgba(255,160,160,.40)"/>
@@ -661,13 +660,6 @@ function fmtDisplayDate(s){
   return `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-async function loadEvents(){
-  try{
-    const r=await fetch('/api/calendar/events');
-    calEvents=await r.json();
-    renderCalendar();
-  }catch(e){console.error('loadEvents error',e);}
-}
 
 function renderCalendar(){
   document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[viewMonth]} ${viewYear}`;
@@ -851,7 +843,7 @@ document.getElementById('evt-save').addEventListener('click',async()=>{
   try{
     const r=await fetch('/api/calendar/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const d=await r.json();
-    if(d.ok){calEvents.push(d.event);renderCalendar();}
+    if(d.ok){ lastEventsSignature=''; await pollEvents(); }
   }catch(e){console.error('saveEvent error',e);}
   document.getElementById('event-modal').classList.remove('open');
 });
@@ -875,8 +867,7 @@ document.getElementById('detail-delete').addEventListener('click',async()=>{
   if(!detailEvent)return;
   try{
     await fetch(`/api/calendar/events/${detailEvent.id}`,{method:'DELETE'});
-    calEvents=calEvents.filter(e=>e.id!==detailEvent.id);
-    renderCalendar();
+    lastEventsSignature=''; await pollEvents();
   }catch(e){console.error('deleteEvent error',e);}
   document.getElementById('detail-modal').classList.remove('open');
 });
@@ -891,8 +882,26 @@ document.getElementById('detail-modal').addEventListener('click',e=>{
     document.getElementById('detail-modal').classList.remove('open');
 });
 
-// Charger les événements au démarrage
-loadEvents();
+/* ── Polling calendrier (sync temps réel, identique au chat) ── */
+let lastEventsSignature = null;
+
+async function pollEvents() {
+  try {
+    const r = await fetch('/api/calendar/events');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const events = await r.json();
+    // Signature pour détecter un changement sans re-render inutile
+    const sig = events.map(e => e.id + '|' + e.title + '|' + e.startDate + '|' + (e.endDate||'')).join('§');
+    if (sig !== lastEventsSignature) {
+      lastEventsSignature = sig;
+      calEvents = events;
+      renderCalendar();
+    }
+  } catch(e) { console.error('pollEvents error', e); }
+}
+
+// Démarrage : chargement immédiat + rafraîchissement toutes les 2.5s
+(async () => { await pollEvents(); setInterval(pollEvents, 2500); })();
 
 /* ════════════════════════════════════════
    CHAT
