@@ -8,21 +8,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ╔══════════════════════════════════════════════════════╗
 // ║  ⚙️  METTEZ VOS ADRESSES IP ICI (une par ligne)     ║
-// ║  Cherchez "votre ip" sur Google pour la connaître   ║
 // ╚══════════════════════════════════════════════════════╝
 const OWNER_IPS = [
   '127.0.0.1',
   '::1',
-  '81.65.172.242',
+  '2a02:8428:141c:a201:ec78:9355:bafa:4487',
 ];
 
-const OWNER_NAME = 'Hôte';
-const GUEST_NAME = 'Invité';
+const OWNER_NAME = 'Louis';
 
 // ── Stockage (Datastore si dispo, sinon mémoire) ─────
 let useDatastore = false;
 let datastore    = null;
 const memMessages = [];
+const memEvents   = [];
 
 try {
   const { Datastore } = require('@google-cloud/datastore');
@@ -33,7 +32,6 @@ try {
   console.warn('Datastore indisponible, mode memoire:', e.message);
 }
 
-// ── Normalisation IP (Cloud Run ajoute ::ffff: parfois) ─
 function getClientIP(req) {
   const forwarded = req.headers['x-forwarded-for'];
   const raw = forwarded ? forwarded.split(',')[0].trim()
@@ -43,16 +41,13 @@ function getClientIP(req) {
 
 function isOwner(req) {
   const ip = getClientIP(req);
-  const normalizedOwners = OWNER_IPS.map(i => i.replace(/^::ffff:/, ''));
-  const match = normalizedOwners.includes(ip);
-  console.log(`IP=${ip} role=${match ? 'HOTE' : 'invite'}`);
-  return match;
+  return OWNER_IPS.map(i => i.replace(/^::ffff:/, '')).includes(ip);
 }
 
-// ── Routes ───────────────────────────────────────────
+// ── Chat routes ───────────────────────────────────────
 app.get('/api/chat/whoami', (req, res) => {
   const owner = isOwner(req);
-  res.json({ role: owner ? 'owner' : 'guest', name: owner ? OWNER_NAME : GUEST_NAME, ip: getClientIP(req) });
+  res.json({ role: owner ? 'owner' : 'guest', name: owner ? OWNER_NAME : 'Invité', ip: getClientIP(req) });
 });
 
 app.get('/api/chat/messages', async (req, res) => {
@@ -66,19 +61,22 @@ app.get('/api/chat/messages', async (req, res) => {
       sender: m.sender, name: m.name, text: m.text, timestamp: m.timestamp,
     })));
   } catch (err) {
-    console.error('Datastore GET error:', err.message);
+    console.error('Datastore GET chat error:', err.message);
     res.json(memMessages);
   }
 });
 
 app.post('/api/chat/send', async (req, res) => {
-  const { text } = req.body;
+  const { text, guestName } = req.body;
   if (!text?.trim()) return res.status(400).json({ error: 'Message vide' });
 
   const owner = isOwner(req);
+  // Les invités peuvent envoyer leur prénom (saisi sur la page d'accueil)
+  const displayName = owner ? OWNER_NAME : (guestName?.trim().slice(0, 30) || 'Invité');
+
   const msg = {
     sender: owner ? 'owner' : 'guest',
-    name:   owner ? OWNER_NAME : GUEST_NAME,
+    name:   displayName,
     text:   text.trim().slice(0, 500),
     timestamp: new Date().toISOString(),
   };
@@ -98,11 +96,85 @@ app.post('/api/chat/send', async (req, res) => {
         ],
       });
     } catch (err) {
-      console.error('Datastore SAVE error:', err.message);
+      console.error('Datastore SAVE chat error:', err.message);
     }
   }
 
   res.json({ ok: true, sender: msg.sender, name: msg.name });
+});
+
+// ── Calendar routes ───────────────────────────────────
+app.get('/api/calendar/events', async (req, res) => {
+  if (!useDatastore) return res.json(memEvents);
+  try {
+    const [events] = await datastore.runQuery(
+      datastore.createQuery('NebuCalendarEvent').order('startDate').limit(500)
+    );
+    res.json(events.map(e => ({
+      id:        String(e[datastore.KEY].id || ''),
+      title:     e.title,
+      startDate: e.startDate,
+      endDate:   e.endDate,
+      startTime: e.startTime || '',
+      endTime:   e.endTime   || '',
+      color:     e.color     || 'blue',
+    })));
+  } catch (err) {
+    console.error('Datastore GET calendar error:', err.message);
+    res.json(memEvents);
+  }
+});
+
+app.post('/api/calendar/events', async (req, res) => {
+  const { title, startDate, endDate, startTime, endTime, color } = req.body;
+  if (!title?.trim() || !startDate) return res.status(400).json({ error: 'Données manquantes' });
+
+  const event = {
+    title:     title.trim().slice(0, 100),
+    startDate,
+    endDate:   endDate || startDate,
+    startTime: startTime || '',
+    endTime:   endTime   || '',
+    color:     color     || 'blue',
+    createdAt: new Date().toISOString(),
+  };
+
+  if (!useDatastore) {
+    event.id = Date.now().toString();
+    memEvents.push(event);
+    return res.json({ ok: true, event });
+  }
+
+  try {
+    const key = datastore.key('NebuCalendarEvent');
+    await datastore.save({
+      key,
+      data: Object.entries(event).map(([name, value]) => ({ name, value })),
+    });
+    event.id = String(key.id);
+    res.json({ ok: true, event });
+  } catch (err) {
+    console.error('Datastore SAVE calendar error:', err.message);
+    event.id = Date.now().toString();
+    memEvents.push(event);
+    res.json({ ok: true, event });
+  }
+});
+
+app.delete('/api/calendar/events/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!useDatastore) {
+    const idx = memEvents.findIndex(e => e.id === id);
+    if (idx !== -1) memEvents.splice(idx, 1);
+    return res.json({ ok: true });
+  }
+  try {
+    await datastore.delete(datastore.key(['NebuCalendarEvent', datastore.int(id)]));
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Datastore DELETE calendar error:', err.message);
+    res.json({ ok: false });
+  }
 });
 
 app.get('/api/health', (_req, res) => {

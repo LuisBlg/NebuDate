@@ -14,252 +14,360 @@
 
     #space-canvas { position:fixed; inset:0; width:100%; height:100%; z-index:0; }
 
-    /* ── Logo haut-droite ── */
-    #logo-small {
-      position:fixed; top:1.4rem; right:2rem; z-index:100;
-      font-family:'Orbitron',sans-serif; font-weight:900; font-size:1.1rem;
-      letter-spacing:.18em; text-transform:uppercase;
-      background:linear-gradient(130deg,#9adcff 0%,#ffffff 45%,#c8b8ff 100%);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      filter:drop-shadow(0 0 10px rgba(154,220,255,.5));
-      opacity:0; animation:fadeIn .9s .1s ease forwards;
+    /* ── TITRE haut-gauche ── */
+    #page-title {
+      position:fixed; top:.9rem; left:1.4rem; z-index:20;
+      pointer-events:none;
     }
-    @keyframes fadeIn { to { opacity:1; } }
-
-    /* ── Contenu principal ── */
-    #main-content {
-      position:fixed; inset:0; z-index:10;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:1.2rem; pointer-events:none;
-      opacity:0; animation:fadeIn .9s .2s ease forwards;
-    }
-
-    .page-label {
+    #page-title .lbl {
       font-family:'Syne',sans-serif; font-weight:300;
-      font-size:clamp(.8rem,1.6vw,1rem); letter-spacing:.25em; text-transform:uppercase;
-      color:rgba(154,220,255,.5);
+      font-size:.65rem; letter-spacing:.22em; text-transform:uppercase;
+      color:rgba(154,220,255,.45); display:block; margin-bottom:.1rem;
     }
-
-    .page-title {
+    #page-title .name {
       font-family:'Orbitron',sans-serif; font-weight:900;
-      font-size:clamp(2rem,5vw,4rem); letter-spacing:.14em; text-transform:uppercase;
-      background:linear-gradient(130deg,#9adcff 0%,#e0f4ff 40%,#ffffff 55%,#c8b8ff 80%,#8ba8ff 100%);
+      font-size:1.4rem; letter-spacing:.14em; text-transform:uppercase;
+      background:linear-gradient(130deg,#9adcff 0%,#e0f4ff 40%,#fff 55%,#c8b8ff 80%,#8ba8ff 100%);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      filter:drop-shadow(0 0 22px rgba(154,220,255,.5));
+      filter:drop-shadow(0 0 12px rgba(154,220,255,.45));
     }
 
-    .sep {
-      width:clamp(80px,12vw,140px); height:1px;
-      background:linear-gradient(90deg,transparent,rgba(154,220,255,.5),transparent);
-    }
-
-    .content-area {
-      display:flex; flex-direction:column; align-items:center; gap:.8rem;
-      pointer-events:all;
-    }
-
-    /* ════════════════════════════════════════
-       CHAT WINDOW
-    ════════════════════════════════════════ */
-    #chat-window {
-      width: clamp(320px, 55vw, 640px);
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      background: rgba(2, 10, 28, 0.72);
-      border: 1px solid rgba(154, 220, 255, 0.14);
-      border-radius: 6px;
-      box-shadow: 0 0 40px rgba(26, 63, 140, 0.45), 0 0 0 1px rgba(154,220,255,.06) inset;
-      backdrop-filter: blur(12px);
-      overflow: hidden;
-    }
-
-    /* Barre de titre du chat */
-    #chat-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .6rem 1rem;
-      border-bottom: 1px solid rgba(154, 220, 255, 0.1);
-      background: rgba(154, 220, 255, 0.04);
-    }
-    #chat-header-left {
-      display: flex; align-items: center; gap: .55rem;
-    }
-    .chat-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #9adcff;
-      box-shadow: 0 0 8px rgba(154,220,255,.8);
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity:1; } 50% { opacity:.35; }
-    }
-    #chat-title {
-      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.7rem;
+    /* ── LOGO haut-droite ── */
+    #logo-small {
+      position:fixed; top:1.1rem; right:2rem; z-index:20;
+      font-family:'Orbitron',sans-serif; font-weight:900; font-size:1rem;
       letter-spacing:.18em; text-transform:uppercase;
-      color: rgba(154,220,255,.7);
+      background:linear-gradient(130deg,#9adcff 0%,#fff 45%,#c8b8ff 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      filter:drop-shadow(0 0 9px rgba(154,220,255,.45));
+    }
+
+    /* ── CALENDRIER (centre) ── */
+    #calendar-panel {
+      position:fixed;
+      top: 3.6rem; left: 1rem; right: 326px; bottom: 3rem;
+      z-index:10; pointer-events:all;
+      display:flex; flex-direction:column;
+      background:rgba(2,8,22,.6);
+      border:1px solid rgba(154,220,255,.1);
+      border-radius:6px; backdrop-filter:blur(14px);
+      box-shadow:0 0 40px rgba(26,63,140,.35);
+      overflow:hidden;
+    }
+
+    /* Header mois */
+    #cal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.55rem 1rem;
+      border-bottom:1px solid rgba(154,220,255,.09);
+      background:rgba(154,220,255,.03); flex-shrink:0;
+    }
+    #cal-month-label {
+      font-family:'Orbitron',sans-serif; font-weight:700;
+      font-size:.82rem; letter-spacing:.16em; text-transform:uppercase;
+      color:rgba(220,240,255,.85);
+    }
+    .cal-nav {
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.75rem;
+      letter-spacing:.1em; padding:.3rem .75rem; border-radius:2px;
+      border:1px solid rgba(154,220,255,.15);
+      background:rgba(10,28,70,.7); color:rgba(154,220,255,.65);
+      cursor:none !important; transition:color .2s,border-color .2s,box-shadow .2s;
+    }
+    .cal-nav:hover:not(:disabled) {
+      color:rgba(154,220,255,1); border-color:rgba(154,220,255,.4);
+      box-shadow:0 0 14px rgba(154,220,255,.18);
+    }
+    .cal-nav:disabled { opacity:.25; }
+
+    /* En-tête jours */
+    #cal-daynames {
+      display:grid; grid-template-columns:repeat(7,1fr);
+      border-bottom:1px solid rgba(154,220,255,.07);
+      flex-shrink:0; background:rgba(154,220,255,.02);
+    }
+    #cal-daynames div {
+      font-family:'Syne',sans-serif; font-size:.65rem; font-weight:600;
+      letter-spacing:.12em; text-transform:uppercase; text-align:center;
+      color:rgba(154,220,255,.4); padding:.35rem 0;
+    }
+
+    /* Corps calendrier */
+    #cal-body {
+      flex:1; overflow-y:auto; overflow-x:hidden;
+    }
+    #cal-body::-webkit-scrollbar { width:3px; }
+    #cal-body::-webkit-scrollbar-track { background:transparent; }
+    #cal-body::-webkit-scrollbar-thumb { background:rgba(154,220,255,.15); border-radius:2px; }
+
+    /* Semaine */
+    .cal-week { border-bottom:1px solid rgba(154,220,255,.05); }
+    .cal-week:last-child { border-bottom:none; }
+
+    /* Barre d'événements multi-jours */
+    .cal-eventsbar {
+      position:relative; min-height:4px;
+      border-bottom:1px solid rgba(154,220,255,.04);
+    }
+
+    /* Bar d'événement */
+    .cal-event-bar {
+      position:absolute; height:18px; border-radius:2px;
+      font-family:'Syne',sans-serif; font-size:.62rem; font-weight:600;
+      letter-spacing:.04em; color:rgba(255,255,255,.92);
+      padding:0 6px; line-height:18px;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+      cursor:none !important;
+      transition:filter .15s;
+    }
+    .cal-event-bar:hover { filter:brightness(1.2); }
+
+    /* Cellules jours */
+    .cal-week-days {
+      display:grid; grid-template-columns:repeat(7,1fr);
+    }
+    .cal-day-cell {
+      min-height:70px; padding:.3rem .35rem;
+      border-right:1px solid rgba(154,220,255,.05);
+      cursor:none !important; position:relative;
+      transition:background .15s;
+    }
+    .cal-day-cell:last-child { border-right:none; }
+    .cal-day-cell:hover:not(.past) { background:rgba(154,220,255,.04); }
+    .cal-day-cell.other-month { opacity:.3; }
+    .cal-day-cell.past { opacity:.4; }
+
+    .cal-day-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%;
+      font-family:'Syne',sans-serif; font-size:.78rem; font-weight:600;
+      color:rgba(195,220,255,.7);
+    }
+    .cal-day-cell.today .cal-day-num {
+      background:rgba(154,220,255,.18);
+      color:rgba(154,220,255,1);
+      box-shadow:0 0 10px rgba(154,220,255,.3);
+    }
+
+    .add-evt-hint {
+      position:absolute; bottom:4px; right:5px;
+      font-family:'Syne',sans-serif; font-size:.6rem; letter-spacing:.06em;
+      color:rgba(154,220,255,.3); opacity:0; transition:opacity .15s;
+    }
+    .cal-day-cell:hover:not(.past) .add-evt-hint { opacity:1; }
+
+    /* ── CHAT (bas-droite) ── */
+    #chat-panel {
+      position:fixed;
+      right:1rem; bottom:3rem;
+      width:310px; height:400px;
+      z-index:10; pointer-events:all;
+      display:flex; flex-direction:column;
+      background:rgba(2,8,22,.72);
+      border:1px solid rgba(154,220,255,.12);
+      border-radius:6px; backdrop-filter:blur(14px);
+      box-shadow:0 0 30px rgba(26,63,140,.4);
+      overflow:hidden;
+    }
+
+    #chat-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.45rem .8rem;
+      border-bottom:1px solid rgba(154,220,255,.09);
+      background:rgba(154,220,255,.03); flex-shrink:0;
+    }
+    #chat-header-left { display:flex; align-items:center; gap:.45rem; }
+    .chat-dot {
+      width:6px; height:6px; border-radius:50%;
+      background:#9adcff; box-shadow:0 0 7px rgba(154,220,255,.8);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    #chat-title {
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.62rem;
+      letter-spacing:.16em; text-transform:uppercase; color:rgba(154,220,255,.65);
     }
     #chat-identity-badge {
-      font-family:'Syne',sans-serif; font-size:.72rem; letter-spacing:.08em;
-      padding: .2rem .65rem; border-radius: 2px;
-      background: rgba(154,220,255,.07);
-      border: 1px solid rgba(154,220,255,.15);
-      color: rgba(195,235,255,.6);
+      font-family:'Syne',sans-serif; font-size:.66rem; letter-spacing:.06em;
+      padding:.15rem .55rem; border-radius:2px;
+      background:rgba(154,220,255,.06); border:1px solid rgba(154,220,255,.14);
+      color:rgba(195,235,255,.55);
     }
-    #chat-identity-badge span {
-      color: rgba(154,220,255,.9); font-weight:600;
-    }
+    #chat-identity-badge span { color:rgba(154,220,255,.9); font-weight:600; }
 
-    /* Zone de messages */
     #chat-messages {
-      height: clamp(220px, 32vh, 340px);
-      overflow-y: auto;
-      display: flex; flex-direction: column;
-      gap: .6rem;
-      padding: .9rem 1rem;
-      scroll-behavior: smooth;
+      flex:1; overflow-y:auto; display:flex; flex-direction:column;
+      gap:.5rem; padding:.7rem .75rem; scroll-behavior:smooth;
     }
-    #chat-messages::-webkit-scrollbar { width:4px; }
+    #chat-messages::-webkit-scrollbar { width:3px; }
     #chat-messages::-webkit-scrollbar-track { background:transparent; }
-    #chat-messages::-webkit-scrollbar-thumb { background:rgba(154,220,255,.2); border-radius:2px; }
+    #chat-messages::-webkit-scrollbar-thumb { background:rgba(154,220,255,.15); border-radius:2px; }
 
-    /* Message vide */
     #chat-empty {
       flex:1; display:flex; align-items:center; justify-content:center;
-      font-family:'Syne',sans-serif; font-size:.8rem; letter-spacing:.1em;
-      color:rgba(154,220,255,.25); text-align:center;
+      font-family:'Syne',sans-serif; font-size:.75rem; letter-spacing:.1em;
+      color:rgba(154,220,255,.22); text-align:center;
     }
 
-    /* Bulles de message */
-    .msg-row {
-      display: flex;
-      flex-direction: column;
-      max-width: 78%;
-      gap: .18rem;
-      animation: msgIn .2s ease;
-    }
-    @keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
-
-    .msg-row.me  { align-self: flex-end; align-items: flex-end; }
-    .msg-row.other { align-self: flex-start; align-items: flex-start; }
-
-    .msg-name {
-      font-family:'Syne',sans-serif; font-size:.68rem; letter-spacing:.12em;
-      text-transform:uppercase; color:rgba(154,220,255,.45);
-    }
-
+    .msg-row { display:flex; flex-direction:column; max-width:82%; gap:.14rem; animation:msgIn .2s ease; }
+    @keyframes msgIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+    .msg-row.me  { align-self:flex-end; align-items:flex-end; }
+    .msg-row.other { align-self:flex-start; align-items:flex-start; }
+    .msg-name { font-family:'Syne',sans-serif; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(154,220,255,.4); }
     .msg-bubble {
-      padding: .5rem .85rem;
-      border-radius: 4px;
-      font-family:'Syne',sans-serif; font-size:.85rem; line-height:1.5;
-      word-break: break-word;
+      padding:.4rem .7rem; border-radius:4px;
+      font-family:'Syne',sans-serif; font-size:.8rem; line-height:1.5;
+      word-break:break-word;
     }
-
-    /* Moi (owner) → bulle bleue à droite */
     .msg-row.me .msg-bubble {
-      background: linear-gradient(135deg, rgba(26,63,140,.7) 0%, rgba(15,38,95,.8) 100%);
-      border: 1px solid rgba(154,220,255,.22);
-      color: rgba(220,240,255,.92);
-      box-shadow: 0 2px 12px rgba(26,63,140,.4);
+      background:linear-gradient(135deg,rgba(26,63,140,.7),rgba(15,38,95,.8));
+      border:1px solid rgba(154,220,255,.2); color:rgba(220,240,255,.92);
     }
-
-    /* Autre (guest) → bulle violette à gauche */
     .msg-row.other .msg-bubble {
-      background: linear-gradient(135deg, rgba(60,30,100,.65) 0%, rgba(40,15,75,.75) 100%);
-      border: 1px solid rgba(200,180,255,.18);
-      color: rgba(225,215,255,.9);
-      box-shadow: 0 2px 12px rgba(60,20,120,.35);
+      background:linear-gradient(135deg,rgba(60,30,100,.65),rgba(40,15,75,.75));
+      border:1px solid rgba(200,180,255,.16); color:rgba(225,215,255,.9);
     }
-
-    .msg-time {
-      font-family:'Syne',sans-serif; font-size:.62rem; letter-spacing:.06em;
-      color:rgba(154,220,255,.28);
-    }
-
-    /* Séparateur de date */
+    .msg-time { font-family:'Syne',sans-serif; font-size:.58rem; color:rgba(154,220,255,.25); }
     .date-sep {
-      display:flex; align-items:center; gap:.6rem;
-      font-family:'Syne',sans-serif; font-size:.65rem; letter-spacing:.14em;
-      color:rgba(154,220,255,.3); text-transform:uppercase;
-      margin: .3rem 0;
+      display:flex; align-items:center; gap:.5rem;
+      font-family:'Syne',sans-serif; font-size:.6rem; letter-spacing:.12em;
+      color:rgba(154,220,255,.28); text-transform:uppercase; margin:.2rem 0;
     }
     .date-sep::before,.date-sep::after {
       content:''; flex:1; height:1px;
-      background:linear-gradient(90deg,transparent,rgba(154,220,255,.18),transparent);
+      background:linear-gradient(90deg,transparent,rgba(154,220,255,.15),transparent);
     }
 
-    /* Séparateur + zone de saisie */
     #chat-input-row {
-      display: flex; gap: .5rem;
-      padding: .65rem .75rem;
-      border-top: 1px solid rgba(154, 220, 255, 0.1);
-      background: rgba(154, 220, 255, 0.025);
+      display:flex; gap:.4rem; padding:.5rem .6rem;
+      border-top:1px solid rgba(154,220,255,.09);
+      background:rgba(154,220,255,.02); flex-shrink:0;
     }
-
     #chat-input {
-      flex: 1;
-      background: rgba(5,15,40,.6);
-      border: 1px solid rgba(154,220,255,.16);
-      border-radius: 3px;
-      padding: .5rem .75rem;
-      font-family:'Syne',sans-serif; font-size:.85rem;
-      color: rgba(220,240,255,.9);
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-      cursor: none !important;
-      caret-color: rgba(154,220,255,.9);
+      flex:1; background:rgba(5,15,40,.6); border:1px solid rgba(154,220,255,.15);
+      border-radius:3px; padding:.42rem .65rem;
+      font-family:'Syne',sans-serif; font-size:.8rem;
+      color:rgba(220,240,255,.9); outline:none; cursor:none !important;
+      caret-color:rgba(154,220,255,.9); transition:border-color .2s;
     }
-    #chat-input::placeholder { color:rgba(154,220,255,.25); }
-    #chat-input:focus {
-      border-color: rgba(154,220,255,.38);
-      box-shadow: 0 0 0 2px rgba(154,220,255,.08);
-    }
-
+    #chat-input::placeholder { color:rgba(154,220,255,.22); }
+    #chat-input:focus { border-color:rgba(154,220,255,.36); }
     #chat-send {
-      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.68rem;
-      letter-spacing:.12em; text-transform:uppercase;
-      padding: .5rem 1.1rem;
-      border: 1px solid rgba(154,220,255,.22);
-      border-radius: 3px;
-      background: linear-gradient(160deg,rgba(10,28,70,.9) 0%,rgba(18,45,100,.9) 100%);
-      color: rgba(154,220,255,.7);
-      cursor: none !important;
-      transition: color .2s, box-shadow .2s, transform .15s, border-color .2s;
-      white-space: nowrap;
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.62rem;
+      letter-spacing:.1em; text-transform:uppercase; padding:.42rem .9rem;
+      border:1px solid rgba(154,220,255,.2); border-radius:3px;
+      background:linear-gradient(160deg,rgba(10,28,70,.9),rgba(18,45,100,.9));
+      color:rgba(154,220,255,.65); cursor:none !important;
+      transition:color .2s,box-shadow .2s,transform .15s,border-color .2s;
     }
     #chat-send:hover:not(:disabled) {
-      color: rgba(154,220,255,1);
-      border-color: rgba(154,220,255,.5);
-      box-shadow: 0 0 18px rgba(154,220,255,.22);
-      transform: translateY(-1px);
+      color:#9adcff; border-color:rgba(154,220,255,.45);
+      box-shadow:0 0 14px rgba(154,220,255,.2); transform:translateY(-1px);
     }
-    #chat-send:active:not(:disabled) { transform:scale(.97); }
-    #chat-send:disabled { opacity:.35; }
-
-    /* Status bar */
+    #chat-send:disabled { opacity:.3; }
     #chat-status {
-      font-family:'Syne',sans-serif; font-size:.68rem; letter-spacing:.06em;
-      color:rgba(154,220,255,.35); text-align:center;
-      padding: .25rem 0 .1rem;
-      min-height:1.2rem;
+      font-family:'Syne',sans-serif; font-size:.62rem; color:rgba(154,220,255,.3);
+      text-align:center; padding:.18rem 0 .08rem; min-height:1rem; flex-shrink:0;
     }
 
-    /* Bouton retour */
-    .btn-back {
-      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.72rem;
-      letter-spacing:.16em; text-transform:uppercase; padding:.55rem 1.6rem;
+    /* ── BOUTON RETOUR (bas-centre) ── */
+    #btn-back {
+      position:fixed; bottom:.7rem; left:50%; transform:translateX(-50%);
+      z-index:20; pointer-events:all;
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.68rem;
+      letter-spacing:.16em; text-transform:uppercase; padding:.5rem 1.5rem;
       border-radius:2px; border:none; outline:none;
-      background:linear-gradient(160deg,#080f22 0%,#0e1e42 100%);
-      color:rgba(154,220,255,.55); cursor:none !important;
-      box-shadow:0 0 0 1px rgba(154,220,255,.12),inset 0 1px 0 rgba(154,220,255,.06);
+      background:linear-gradient(160deg,#080f22,#0e1e42);
+      color:rgba(154,220,255,.5); cursor:none !important;
+      box-shadow:0 0 0 1px rgba(154,220,255,.1),inset 0 1px 0 rgba(154,220,255,.05);
       transition:color .25s,box-shadow .25s,transform .25s;
-      pointer-events:all;
     }
-    .btn-back:hover {
-      color:rgba(154,220,255,.9);
-      transform:translateY(-2px);
-      box-shadow:0 0 0 1px rgba(154,220,255,.35),0 4px 24px rgba(26,63,140,.6),0 0 16px rgba(154,220,255,.2);
+    #btn-back:hover {
+      color:rgba(154,220,255,.85); transform:translateX(-50%) translateY(-2px);
+      box-shadow:0 0 0 1px rgba(154,220,255,.3),0 4px 20px rgba(26,63,140,.5);
     }
-    .btn-back:active { transform:scale(.97); }
+    #btn-back:active { transform:translateX(-50%) scale(.97); }
+
+    /* ── MODALS ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0; z-index:100;
+      background:rgba(0,3,16,.78); backdrop-filter:blur(8px);
+      align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+      background:rgba(4,12,34,.95);
+      border:1px solid rgba(154,220,255,.18); border-radius:6px;
+      padding:1.6rem 1.8rem 1.4rem; width:380px; max-width:95vw;
+      box-shadow:0 0 60px rgba(26,63,140,.55);
+      animation:boxIn .28s cubic-bezier(.22,.68,0,1.2);
+    }
+    @keyframes boxIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+    .modal-heading {
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.82rem;
+      letter-spacing:.18em; text-transform:uppercase;
+      color:rgba(220,240,255,.85); margin-bottom:1.1rem;
+    }
+    .form-group { display:flex; flex-direction:column; gap:.35rem; margin-bottom:.75rem; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:.75rem; }
+    .form-label {
+      font-family:'Syne',sans-serif; font-size:.68rem; letter-spacing:.1em;
+      text-transform:uppercase; color:rgba(154,220,255,.5);
+    }
+    .form-input {
+      background:rgba(5,15,40,.7); border:1px solid rgba(154,220,255,.16);
+      border-radius:3px; padding:.45rem .65rem;
+      font-family:'Syne',sans-serif; font-size:.82rem;
+      color:rgba(220,240,255,.9); outline:none; cursor:auto !important;
+      caret-color:rgba(154,220,255,.9); transition:border-color .2s;
+    }
+    .form-input:focus { border-color:rgba(154,220,255,.38); }
+    .form-input[type="date"],.form-input[type="time"] { cursor:none !important; }
+    /* Style des inputs date/time natifs */
+    .form-input::-webkit-calendar-picker-indicator { filter:invert(1) opacity(.5); }
+
+    /* Couleurs */
+    .color-picker { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.2rem; }
+    .color-dot {
+      width:22px; height:22px; border-radius:50%;
+      cursor:none !important; border:2px solid transparent;
+      transition:transform .15s,border-color .15s;
+    }
+    .color-dot:hover { transform:scale(1.2); }
+    .color-dot.selected { border-color:rgba(255,255,255,.7); transform:scale(1.15); }
+
+    .modal-actions { display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.1rem; }
+    .btn-modal-cancel {
+      font-family:'Syne',sans-serif; font-size:.78rem; padding:.45rem 1rem;
+      border:1px solid rgba(154,220,255,.15); border-radius:3px;
+      background:transparent; color:rgba(154,220,255,.5); cursor:none !important;
+      transition:color .2s,border-color .2s;
+    }
+    .btn-modal-cancel:hover { color:rgba(154,220,255,.8); border-color:rgba(154,220,255,.35); }
+    .btn-modal-save {
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.72rem;
+      letter-spacing:.12em; text-transform:uppercase; padding:.5rem 1.2rem;
+      border:1px solid rgba(154,220,255,.25); border-radius:3px;
+      background:linear-gradient(160deg,rgba(10,28,70,.9),rgba(18,45,100,.9));
+      color:rgba(154,220,255,.8); cursor:none !important;
+      transition:color .2s,box-shadow .2s,border-color .2s;
+    }
+    .btn-modal-save:hover {
+      color:#9adcff; border-color:rgba(154,220,255,.5);
+      box-shadow:0 0 16px rgba(154,220,255,.22);
+    }
+    .btn-modal-delete {
+      font-family:'Syne',sans-serif; font-size:.78rem; padding:.45rem 1rem;
+      border:1px solid rgba(255,80,80,.25); border-radius:3px;
+      background:transparent; color:rgba(255,120,120,.6); cursor:none !important;
+      transition:color .2s,border-color .2s;
+    }
+    .btn-modal-delete:hover { color:rgba(255,120,120,.9); border-color:rgba(255,80,80,.5); }
+
+    /* Detail event */
+    #detail-colorbar { height:4px; border-radius:2px; margin-bottom:1rem; }
+    #detail-title { font-family:'Orbitron',sans-serif; font-weight:700; font-size:.88rem; letter-spacing:.12em; color:rgba(220,240,255,.9); margin-bottom:.6rem; }
+    #detail-info { font-family:'Syne',sans-serif; font-size:.8rem; color:rgba(195,220,255,.6); line-height:1.6; }
 
     /* ── Coccinelle ── */
     #cursor-bug { position:fixed; pointer-events:none; z-index:99999; top:0; left:0; width:0; height:0; }
@@ -270,50 +378,115 @@
     #cursor-bug.is-flying .fw  { opacity:1; }
     #cursor-bug.is-flying .fw-l { animation:flapL .13s ease-in-out infinite alternate; }
     #cursor-bug.is-flying .fw-r { animation:flapR .13s ease-in-out infinite alternate; }
-    @keyframes flapL { from{transform:rotate(-6deg)  scaleY(.60);} to{transform:rotate(-42deg) scaleY(1);} }
-    @keyframes flapR { from{transform:rotate(6deg)   scaleY(.60);} to{transform:rotate(42deg)  scaleY(1);} }
+    @keyframes flapL { from{transform:rotate(-6deg) scaleY(.60)} to{transform:rotate(-42deg) scaleY(1)} }
+    @keyframes flapR { from{transform:rotate(6deg) scaleY(.60)} to{transform:rotate(42deg) scaleY(1)} }
   </style>
 </head>
 <body>
 
 <canvas id="space-canvas"></canvas>
 
+<!-- TITRE haut-gauche -->
+<div id="page-title">
+  <span class="lbl">Réservation avec</span>
+  <span class="name">Louis</span>
+</div>
+
+<!-- LOGO haut-droite -->
 <div id="logo-small">NebuDate</div>
 
-<div id="main-content">
-  <span class="page-label">Réservation avec</span>
-  <h1 class="page-title">Louis</h1>
-  <div class="sep"></div>
+<!-- CALENDRIER -->
+<div id="calendar-panel">
+  <div id="cal-header">
+    <button class="cal-nav" id="cal-prev">←</button>
+    <span id="cal-month-label"></span>
+    <button class="cal-nav" id="cal-next">→</button>
+  </div>
+  <div id="cal-daynames">
+    <div>Lun</div><div>Mar</div><div>Mer</div>
+    <div>Jeu</div><div>Ven</div><div>Sam</div><div>Dim</div>
+  </div>
+  <div id="cal-body"></div>
+</div>
 
-  <div class="content-area">
-
-    <!-- ════════════════════════════════════════
-         CHAT
-    ════════════════════════════════════════ -->
-    <div id="chat-window">
-
-      <div id="chat-header">
-        <div id="chat-header-left">
-          <div class="chat-dot"></div>
-          <span id="chat-title">Canal privé</span>
-        </div>
-        <div id="chat-identity-badge">Connecté en tant que <span id="my-name">…</span></div>
-      </div>
-
-      <div id="chat-messages">
-        <div id="chat-empty">Aucun message pour l'instant…<br>Soyez le premier à écrire ✦</div>
-      </div>
-
-      <div id="chat-input-row">
-        <input id="chat-input" type="text" placeholder="Votre message…" maxlength="500" autocomplete="off" />
-        <button id="chat-send">Envoyer</button>
-      </div>
-
-      <div id="chat-status"></div>
+<!-- CHAT -->
+<div id="chat-panel">
+  <div id="chat-header">
+    <div id="chat-header-left">
+      <div class="chat-dot"></div>
+      <span id="chat-title">Canal privé</span>
     </div>
-    <!-- /chat-window -->
+    <div id="chat-identity-badge">Connecté en tant que <span id="my-name">…</span></div>
+  </div>
+  <div id="chat-messages">
+    <div id="chat-empty">Aucun message…<br>Soyez le premier ✦</div>
+  </div>
+  <div id="chat-input-row">
+    <input id="chat-input" type="text" placeholder="Votre message…" maxlength="500" autocomplete="off">
+    <button id="chat-send">Envoyer</button>
+  </div>
+  <div id="chat-status"></div>
+</div>
 
-    <button class="btn-back" onclick="window.location.href='index.html'">← Retour</button>
+<!-- RETOUR -->
+<button id="btn-back" onclick="window.location.href='index.html'">← Retour</button>
+
+<!-- MODAL CRÉATION ÉVÉNEMENT -->
+<div id="event-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-heading">Nouvel événement</div>
+    <div class="form-group">
+      <label class="form-label">Titre *</label>
+      <input class="form-input" id="evt-title" type="text" placeholder="Titre de l'événement…" maxlength="100">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Début</label>
+        <input class="form-input" id="evt-start-date" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fin</label>
+        <input class="form-input" id="evt-end-date" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Heure début</label>
+        <input class="form-input" id="evt-start-time" type="time">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Heure fin</label>
+        <input class="form-input" id="evt-end-time" type="time">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Couleur</label>
+      <div class="color-picker" id="color-picker">
+        <div class="color-dot selected" data-color="blue"   style="background:rgba(30,100,220,.9)"></div>
+        <div class="color-dot"          data-color="purple" style="background:rgba(120,40,200,.9)"></div>
+        <div class="color-dot"          data-color="teal"   style="background:rgba(0,160,180,.9)"></div>
+        <div class="color-dot"          data-color="pink"   style="background:rgba(200,40,120,.9)"></div>
+        <div class="color-dot"          data-color="green"  style="background:rgba(30,180,100,.9)"></div>
+        <div class="color-dot"          data-color="orange" style="background:rgba(200,120,20,.9)"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="evt-cancel">Annuler</button>
+      <button class="btn-modal-save"   id="evt-save">Créer l'événement</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DÉTAIL ÉVÉNEMENT -->
+<div id="detail-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div id="detail-colorbar"></div>
+    <div id="detail-title"></div>
+    <div id="detail-info"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-delete" id="detail-delete">Supprimer</button>
+      <button class="btn-modal-save"   id="detail-close">Fermer</button>
+    </div>
   </div>
 </div>
 
@@ -322,32 +495,30 @@
   <div id="bug-body">
     <svg viewBox="0 0 80 64" width="76" height="70" style="overflow:visible" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <radialGradient id="elytra-shine2" cx="38%" cy="28%" r="62%">
-          <stop offset="0%"   stop-color="rgba(255,160,160,.40)"/>
-          <stop offset="55%"  stop-color="rgba(180,0,0,.05)"/>
+        <radialGradient id="es2" cx="38%" cy="28%" r="62%">
+          <stop offset="0%" stop-color="rgba(255,160,160,.40)"/>
+          <stop offset="55%" stop-color="rgba(180,0,0,.05)"/>
           <stop offset="100%" stop-color="rgba(60,0,0,.15)"/>
         </radialGradient>
-        <filter id="wing-blur2" x="-20%" y="-20%" width="140%" height="140%">
+        <filter id="wb2" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="0.6"/>
         </filter>
       </defs>
       <g class="fw fw-l">
-        <path d="M40,31 C34,20 16,12 4,20 C-3,27 2,40 12,40 C25,43 38,35 40,31Z"
-              fill="rgba(210,238,255,.52)" stroke="rgba(170,215,255,.55)" stroke-width=".6" filter="url(#wing-blur2)"/>
+        <path d="M40,31 C34,20 16,12 4,20 C-3,27 2,40 12,40 C25,43 38,35 40,31Z" fill="rgba(210,238,255,.52)" stroke="rgba(170,215,255,.55)" stroke-width=".6" filter="url(#wb2)"/>
         <line x1="40" y1="31" x2="14" y2="19" stroke="rgba(180,220,255,.4)" stroke-width=".7"/>
         <line x1="40" y1="31" x2="6"  y2="29" stroke="rgba(180,220,255,.3)" stroke-width=".6"/>
         <line x1="40" y1="31" x2="14" y2="40" stroke="rgba(180,220,255,.3)" stroke-width=".5"/>
       </g>
       <g class="fw fw-r">
-        <path d="M40,31 C46,20 64,12 76,20 C83,27 78,40 68,40 C55,43 42,35 40,31Z"
-              fill="rgba(210,238,255,.52)" stroke="rgba(170,215,255,.55)" stroke-width=".6" filter="url(#wing-blur2)"/>
+        <path d="M40,31 C46,20 64,12 76,20 C83,27 78,40 68,40 C55,43 42,35 40,31Z" fill="rgba(210,238,255,.52)" stroke="rgba(170,215,255,.55)" stroke-width=".6" filter="url(#wb2)"/>
         <line x1="40" y1="31" x2="66" y2="19" stroke="rgba(180,220,255,.4)" stroke-width=".7"/>
         <line x1="40" y1="31" x2="74" y2="29" stroke="rgba(180,220,255,.3)" stroke-width=".6"/>
         <line x1="40" y1="31" x2="66" y2="40" stroke="rgba(180,220,255,.3)" stroke-width=".5"/>
       </g>
       <ellipse cx="41.5" cy="38" rx="13.5" ry="17.5" fill="rgba(0,0,0,.30)"/>
       <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="#c41515"/>
-      <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="url(#elytra-shine2)"/>
+      <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="url(#es2)"/>
       <ellipse cx="36.5" cy="26" rx="4.5" ry="6.5" fill="rgba(255,255,255,.12)" transform="rotate(-12,36.5,26)"/>
       <line x1="40" y1="19" x2="40" y2="52.5" stroke="#0d0d0d" stroke-width="1.4" stroke-linecap="round"/>
       <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="none" stroke="#0d0d0d" stroke-width="1.3"/>
@@ -363,8 +534,8 @@
       <circle cx="44.5" cy="15" r="2.2" fill="#000"/>
       <circle cx="35"   cy="14.5" r=".7" fill="rgba(255,255,255,.6)"/>
       <circle cx="44"   cy="14.5" r=".7" fill="rgba(255,255,255,.6)"/>
-      <path d="M36,8 Q27,1 22,-4"  stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M44,8 Q53,1 58,-4"  stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M36,8 Q27,1 22,-4" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M44,8 Q53,1 58,-4" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
       <circle cx="22" cy="-4" r="2.2" fill="#222"/>
       <circle cx="58" cy="-4" r="2.2" fill="#222"/>
     </svg>
@@ -372,31 +543,19 @@
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════
-   CANVAS (identique à l'original)
-══════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════
+   CANVAS ESPACE
+════════════════════════════════════════ */
 const canvas=document.getElementById('space-canvas'),ctx=canvas.getContext('2d');
 let W,H;
 function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
 resize();window.addEventListener('resize',resize);
 const NSTARS=380;
-const stars=Array.from({length:NSTARS},()=>({
-  x:Math.random(),y:Math.random(),r:Math.pow(Math.random(),2)*2+.25,
-  base:Math.random()*.6+.25,speed:Math.random()*.8+.3,phase:Math.random()*Math.PI*2
-}));
-const nebulae=[
-  {cx:.14,cy:.28,rx:.32,ry:.20,rot:.4, c1:'rgba(55,0,110,', c2:'rgba(0,35,95,'},
-  {cx:.78,cy:.62,rx:.26,ry:.18,rot:-.2,c1:'rgba(0,70,110,', c2:'rgba(50,0,90,'},
-  {cx:.52,cy:.12,rx:.22,ry:.14,rot:.1, c1:'rgba(0,55,80,',  c2:'rgba(35,0,95,'},
-  {cx:.85,cy:.80,rx:.20,ry:.12,rot:.6, c1:'rgba(80,0,80,',  c2:'rgba(0,40,80,'},
-];
+const stars=Array.from({length:NSTARS},()=>({x:Math.random(),y:Math.random(),r:Math.pow(Math.random(),2)*2+.25,base:Math.random()*.6+.25,speed:Math.random()*.8+.3,phase:Math.random()*Math.PI*2}));
+const nebulae=[{cx:.14,cy:.28,rx:.32,ry:.20,rot:.4,c1:'rgba(55,0,110,',c2:'rgba(0,35,95,'},{cx:.78,cy:.62,rx:.26,ry:.18,rot:-.2,c1:'rgba(0,70,110,',c2:'rgba(50,0,90,'},{cx:.52,cy:.12,rx:.22,ry:.14,rot:.1,c1:'rgba(0,55,80,',c2:'rgba(35,0,95,'},{cx:.85,cy:.80,rx:.20,ry:.12,rot:.6,c1:'rgba(80,0,80,',c2:'rgba(0,40,80,'}];
 const PLT={cx:.80,cy:.20,r:55};
 let shooters=[],lastSpawn=0,nextDelay=3+Math.random()*5;
-function spawnShooter(){
-  const angle=Math.PI/5+(Math.random()-.5)*.4;
-  shooters.push({x0:Math.random()*.7,y0:Math.random()*.35,angle,
-    len:90+Math.random()*130,life:0,dur:1.6+Math.random()*.8});
-}
+function spawnShooter(){const angle=Math.PI/5+(Math.random()-.5)*.4;shooters.push({x0:Math.random()*.7,y0:Math.random()*.35,angle,len:90+Math.random()*130,life:0,dur:1.6+Math.random()*.8});}
 let lastT=0;
 function draw(ts){
   const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;
@@ -410,27 +569,23 @@ function draw(ts){
     g.addColorStop(0,n.c1+'0.16)');g.addColorStop(.45,n.c2+'0.08)');g.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,nrx,0,Math.PI*2);ctx.fill();ctx.restore();
   });
-  {
-    const px=PLT.cx*W,py=PLT.cy*H,pr=PLT.r;
-    ctx.save();ctx.translate(px,py);ctx.rotate(-.28);ctx.scale(1,.28);
-    ctx.beginPath();ctx.arc(0,0,pr*2.1,0,Math.PI*2);ctx.strokeStyle='rgba(90,140,210,.18)';ctx.lineWidth=pr*.22;ctx.stroke();
-    ctx.beginPath();ctx.arc(0,0,pr*1.65,0,Math.PI*2);ctx.strokeStyle='rgba(110,160,230,.12)';ctx.lineWidth=pr*.14;ctx.stroke();ctx.restore();
-    const pg=ctx.createRadialGradient(px-pr*.3,py-pr*.3,pr*.08,px,py,pr);
-    pg.addColorStop(0,'#4b6fa8');pg.addColorStop(.4,'#1c3a60');pg.addColorStop(.85,'#0c1e34');pg.addColorStop(1,'#05101e');
-    ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fillStyle=pg;ctx.fill();
-    const atm=ctx.createRadialGradient(px,py,pr*.82,px,py,pr*1.35);
-    atm.addColorStop(0,'rgba(80,150,230,.16)');atm.addColorStop(1,'rgba(80,150,230,0)');
-    ctx.beginPath();ctx.arc(px,py,pr*1.35,0,Math.PI*2);ctx.fillStyle=atm;ctx.fill();
-  }
+  {const px=PLT.cx*W,py=PLT.cy*H,pr=PLT.r;
+  ctx.save();ctx.translate(px,py);ctx.rotate(-.28);ctx.scale(1,.28);
+  ctx.beginPath();ctx.arc(0,0,pr*2.1,0,Math.PI*2);ctx.strokeStyle='rgba(90,140,210,.18)';ctx.lineWidth=pr*.22;ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,pr*1.65,0,Math.PI*2);ctx.strokeStyle='rgba(110,160,230,.12)';ctx.lineWidth=pr*.14;ctx.stroke();ctx.restore();
+  const pg=ctx.createRadialGradient(px-pr*.3,py-pr*.3,pr*.08,px,py,pr);
+  pg.addColorStop(0,'#4b6fa8');pg.addColorStop(.4,'#1c3a60');pg.addColorStop(.85,'#0c1e34');pg.addColorStop(1,'#05101e');
+  ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fillStyle=pg;ctx.fill();
+  const atm=ctx.createRadialGradient(px,py,pr*.82,px,py,pr*1.35);
+  atm.addColorStop(0,'rgba(80,150,230,.16)');atm.addColorStop(1,'rgba(80,150,230,0)');
+  ctx.beginPath();ctx.arc(px,py,pr*1.35,0,Math.PI*2);ctx.fillStyle=atm;ctx.fill();}
   const t=ts/1000;
   stars.forEach(s=>{
     const f=.65+.35*Math.sin(t*s.speed+s.phase),op=s.base*f,sx=s.x*W,sy=s.y*H;
     ctx.beginPath();ctx.arc(sx,sy,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,248,255,${op})`;ctx.fill();
-    if(s.r>1.3){
-      const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,s.r*4.5);
+    if(s.r>1.3){const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,s.r*4.5);
       glow.addColorStop(0,`rgba(200,230,255,${op*.45})`);glow.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.beginPath();ctx.arc(sx,sy,s.r*4.5,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
-    }
+      ctx.beginPath();ctx.arc(sx,sy,s.r*4.5,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();}
   });
   lastSpawn+=dt;
   if(lastSpawn>=nextDelay){spawnShooter();lastSpawn=0;nextDelay=3+Math.random()*6;}
@@ -451,191 +606,374 @@ function draw(ts){
 }
 requestAnimationFrame(draw);
 
-/* ══════════════════════════════════════════════════════
+/* ════════════════════════════════════════
    COCCINELLE
-══════════════════════════════════════════════════════ */
+════════════════════════════════════════ */
 const bug=document.getElementById('cursor-bug');
 let bugAngle=0,targetAngle=0,prevMX=null,prevMY=null,moveTimer=null;
 function lerpAngle(a,b,t){let d=((b-a)%360+540)%360-180;return a+d*t;}
-(function bugLoop(){
-  bugAngle=lerpAngle(bugAngle,targetAngle,.16);
-  bug.style.transform=`rotate(${bugAngle}deg)`;
-  requestAnimationFrame(bugLoop);
-})();
+(function bugLoop(){bugAngle=lerpAngle(bugAngle,targetAngle,.16);bug.style.transform=`rotate(${bugAngle}deg)`;requestAnimationFrame(bugLoop);})();
 document.addEventListener('mousemove',e=>{
-  bug.style.left=e.clientX+'px'; bug.style.top=e.clientY+'px';
-  if(prevMX!==null){
-    const dx=e.clientX-prevMX,dy=e.clientY-prevMY;
-    if(Math.hypot(dx,dy)>2.5) targetAngle=Math.atan2(dy,dx)*180/Math.PI+90;
-  }
+  bug.style.left=e.clientX+'px';bug.style.top=e.clientY+'px';
+  if(prevMX!==null){const dx=e.clientX-prevMX,dy=e.clientY-prevMY;if(Math.hypot(dx,dy)>2.5)targetAngle=Math.atan2(dy,dx)*180/Math.PI+90;}
   prevMX=e.clientX;prevMY=e.clientY;
-  bug.classList.add('is-flying');
-  clearTimeout(moveTimer);
-  moveTimer=setTimeout(()=>bug.classList.remove('is-flying'),150);
+  bug.classList.add('is-flying');clearTimeout(moveTimer);moveTimer=setTimeout(()=>bug.classList.remove('is-flying'),150);
 });
 document.addEventListener('mouseleave',()=>{clearTimeout(moveTimer);bug.classList.remove('is-flying');bug.style.opacity='0';});
 document.addEventListener('mouseenter',()=>{bug.style.opacity='1';});
 
-/* ══════════════════════════════════════════════════════
-   CHAT
-══════════════════════════════════════════════════════ */
-let myRole = 'guest';
-let myName  = '…';
-let lastMessages = [];     // cache pour détecter les nouveaux messages
-let pollTimer = null;
+/* ════════════════════════════════════════
+   CALENDRIER
+════════════════════════════════════════ */
+const TODAY      = new Date();
+const TODAY_STR  = fmtDate(TODAY);
+const MIN_YEAR   = TODAY.getFullYear();
+const MIN_MONTH  = TODAY.getMonth();
 
-const msgsEl    = document.getElementById('chat-messages');
-const emptyEl   = document.getElementById('chat-empty');
-const inputEl   = document.getElementById('chat-input');
-const sendBtn   = document.getElementById('chat-send');
-const statusEl  = document.getElementById('chat-status');
-const nameEl    = document.getElementById('my-name');
+let viewYear  = MIN_YEAR;
+let viewMonth = MIN_MONTH;
+let calEvents = [];
+let selectedColor = 'blue';
+let detailEvent   = null;
 
-// ── Utilitaires ─────────────────────────────────────
-function fmtTime(iso) {
-  const d = new Date(iso);
-  return d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+const MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+const EVENT_COLORS = {
+  blue:   'rgba(30,100,220,.85)',
+  purple: 'rgba(120,40,200,.85)',
+  teal:   'rgba(0,160,180,.85)',
+  pink:   'rgba(200,40,120,.85)',
+  green:  'rgba(30,180,100,.85)',
+  orange: 'rgba(200,120,20,.85)',
+};
+
+function fmtDate(d) {
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
 }
-function fmtDate(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+function parseLocalDate(s) {
+  const [y,m,d]=s.split('-').map(Number);
+  return new Date(y,m-1,d);
 }
-function sameDay(a, b) {
-  return a.slice(0,10) === b.slice(0,10);
-}
-
-// ── Rendu des messages ───────────────────────────────
-function renderMessages(msgs) {
-  if (!msgs.length) {
-    msgsEl.innerHTML = '';
-    msgsEl.appendChild(emptyEl);
-    return;
-  }
-  if (emptyEl.parentNode) emptyEl.parentNode.removeChild(emptyEl);
-
-  msgsEl.innerHTML = '';
-  let lastDate = null;
-
-  msgs.forEach(m => {
-    // Séparateur de date
-    if (!lastDate || !sameDay(m.timestamp, lastDate)) {
-      const sep = document.createElement('div');
-      sep.className = 'date-sep';
-      sep.textContent = fmtDate(m.timestamp);
-      msgsEl.appendChild(sep);
-      lastDate = m.timestamp;
-    }
-
-    const isMe = (m.sender === myRole) ||
-                 (myRole === 'owner' && m.sender === 'owner') ||
-                 (myRole === 'guest' && m.sender === 'guest');
-
-    const row = document.createElement('div');
-    row.className = 'msg-row ' + (isMe ? 'me' : 'other');
-
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'msg-name';
-    nameDiv.textContent = m.name;
-
-    const bubble = document.createElement('div');
-    bubble.className = 'msg-bubble';
-    bubble.textContent = m.text;
-
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'msg-time';
-    timeDiv.textContent = fmtTime(m.timestamp);
-
-    row.appendChild(nameDiv);
-    row.appendChild(bubble);
-    row.appendChild(timeDiv);
-    msgsEl.appendChild(row);
-  });
-
-  // Scroll vers le bas
-  msgsEl.scrollTop = msgsEl.scrollHeight;
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function fmtDisplayDate(s){
+  const d=parseLocalDate(s);
+  return `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-// ── Chargement initial de l'identité ────────────────
-async function loadWhoami() {
-  try {
-    const r = await fetch('/api/chat/whoami');
-    const d = await r.json();
-    myRole = d.role;
-    myName = d.name;
-    nameEl.textContent = myName;
-  } catch(e) {
-    nameEl.textContent = '?';
-  }
+async function loadEvents(){
+  try{
+    const r=await fetch('/api/calendar/events');
+    calEvents=await r.json();
+    renderCalendar();
+  }catch(e){console.error('loadEvents error',e);}
 }
 
-// ── Polling des messages ─────────────────────────────
-async function fetchMessages() {
-  try {
-    const r = await fetch('/api/chat/messages');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const msgs = await r.json();
+function renderCalendar(){
+  document.getElementById('cal-month-label').textContent=`${MONTH_NAMES[viewMonth]} ${viewYear}`;
+  document.getElementById('cal-prev').disabled = (viewYear===MIN_YEAR && viewMonth===MIN_MONTH);
 
-    // Re-rendu uniquement si changement
-    const sig = msgs.map(m => m.id + m.text).join('|');
-    const lastSig = lastMessages.map(m => m.id + m.text).join('|');
-    if (sig !== lastSig) {
-      lastMessages = msgs;
-      renderMessages(msgs);
-    }
-    setStatus('');
-  } catch(e) {
-    setStatus('⚠ Connexion interrompue…');
-  }
-}
+  const body=document.getElementById('cal-body');
+  body.innerHTML='';
 
-function startPolling() {
-  fetchMessages();
-  pollTimer = setInterval(fetchMessages, 2500); // rafraîchissement toutes les 2.5s
-}
+  // Premier jour du mois (lundi=0)
+  const firstDay=new Date(viewYear,viewMonth,1);
+  let startDow=firstDay.getDay()-1; if(startDow<0)startDow=6; // lundi=0
 
-// ── Envoi d'un message ───────────────────────────────
-async function sendMessage() {
-  const text = inputEl.value.trim();
-  if (!text) return;
+  // Dernier jour du mois
+  const lastDay=new Date(viewYear,viewMonth+1,0).getDate();
 
-  sendBtn.disabled = true;
-  inputEl.disabled = true;
-  setStatus('Envoi…');
+  // Construire tableau de toutes les semaines
+  let day=new Date(viewYear,viewMonth,1-startDow);
 
-  try {
-    const r = await fetch('/api/chat/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
+  // On affiche 6 semaines max
+  for(let w=0;w<6;w++){
+    const weekDays=[];
+    for(let d=0;d<7;d++){weekDays.push(new Date(day));day.setDate(day.getDate()+1);}
+
+    // Ne pas afficher si toute la semaine est dans le mois suivant après le dernier jour
+    const wStart=weekDays[0],wEnd=weekDays[6];
+    if(wStart.getMonth()>viewMonth&&wStart.getFullYear()>=viewYear&&w>=4)break;
+
+    const weekEl=document.createElement('div');
+    weekEl.className='cal-week';
+
+    // ── Barre événements ──
+    const evtBar=document.createElement('div');
+    evtBar.className='cal-eventsbar';
+
+    // Événements qui chevauchent cette semaine
+    const wEvts=calEvents.filter(e=>{
+      const eS=parseLocalDate(e.startDate),eE=parseLocalDate(e.endDate||e.startDate);
+      return eS<=wEnd&&eE>=wStart;
+    }).map(e=>({...e}));
+
+    // Trier
+    wEvts.sort((a,b)=>{
+      const dA=parseLocalDate(a.startDate),dB=parseLocalDate(b.startDate);
+      if(dA<dB)return -1;if(dA>dB)return 1;
+      const lenA=parseLocalDate(a.endDate||a.startDate)-parseLocalDate(a.startDate);
+      const lenB=parseLocalDate(b.endDate||b.startDate)-parseLocalDate(b.startDate);
+      return lenB-lenA;
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    inputEl.value = '';
-    await fetchMessages(); // rafraîchissement immédiat
-    setStatus('');
-  } catch(e) {
-    setStatus('⚠ Erreur lors de l\'envoi');
-  } finally {
-    sendBtn.disabled = false;
-    inputEl.disabled = false;
-    inputEl.focus();
+
+    // Assigner lanes
+    const laneFill=[];
+    wEvts.forEach(e=>{
+      const eS=parseLocalDate(e.startDate);
+      let lane=laneFill.findIndex(end=>end<eS);
+      if(lane===-1){lane=laneFill.length;laneFill.push(null);}
+      laneFill[lane]=parseLocalDate(e.endDate||e.startDate);
+      e._lane=lane;
+    });
+
+    const maxLanes=Math.min(laneFill.length,3);
+    evtBar.style.minHeight=maxLanes>0?(maxLanes*22+4)+'px':'4px';
+
+    wEvts.forEach(e=>{
+      if(e._lane>=3)return;
+      const eS=parseLocalDate(e.startDate),eE=parseLocalDate(e.endDate||e.startDate);
+      const clampS=eS<wStart?wStart:eS;
+      const clampE=eE>wEnd?wEnd:eE;
+      let sCol=weekDays.findIndex(d=>sameDay(d,clampS));
+      let eCol=weekDays.findIndex(d=>sameDay(d,clampE));
+      if(sCol<0)sCol=0;if(eCol<0)eCol=6;
+      const span=eCol-sCol+1;
+
+      const bar=document.createElement('div');
+      bar.className='cal-event-bar';
+      bar.style.left=`calc(${sCol}/7*100% + 2px)`;
+      bar.style.width=`calc(${span}/7*100% - 4px)`;
+      bar.style.top=(e._lane*22+2)+'px';
+      bar.style.background=EVENT_COLORS[e.color]||EVENT_COLORS.blue;
+
+      const timeStr=e.startTime?` · ${e.startTime}`:'';
+      const contL=eS<wStart?'‹ ':'';
+      const contR=eE>wEnd?' ›':'';
+      bar.textContent=contL+e.title+timeStr+contR;
+      bar.title=e.title;
+
+      // Arrondi selon continuation
+      bar.style.borderTopLeftRadius  = eS<wStart?'0':'3px';
+      bar.style.borderBottomLeftRadius = eS<wStart?'0':'3px';
+      bar.style.borderTopRightRadius  = eE>wEnd?'0':'3px';
+      bar.style.borderBottomRightRadius= eE>wEnd?'0':'3px';
+
+      bar.addEventListener('click',ev=>{ev.stopPropagation();showDetail(e);});
+      evtBar.appendChild(bar);
+    });
+    weekEl.appendChild(evtBar);
+
+    // ── Cellules jours ──
+    const daysRow=document.createElement('div');
+    daysRow.className='cal-week-days';
+    weekDays.forEach(wd=>{
+      const cell=document.createElement('div');
+      cell.className='cal-day-cell';
+      const isCurrentM=wd.getMonth()===viewMonth;
+      const isPast=wd<new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
+      const isTdy=sameDay(wd,TODAY);
+      if(!isCurrentM)cell.classList.add('other-month');
+      if(isPast)cell.classList.add('past');
+      if(isTdy)cell.classList.add('today');
+
+      const num=document.createElement('span');
+      num.className='cal-day-num';
+      num.textContent=wd.getDate();
+      cell.appendChild(num);
+
+      if(!isPast){
+        const hint=document.createElement('div');
+        hint.className='add-evt-hint';
+        hint.textContent='+ événement';
+        cell.appendChild(hint);
+        cell.addEventListener('click',()=>showEventModal(wd));
+      }
+      daysRow.appendChild(cell);
+    });
+    weekEl.appendChild(daysRow);
+    body.appendChild(weekEl);
   }
 }
 
-function setStatus(msg) {
-  statusEl.textContent = msg;
-}
-
-// ── Événements ───────────────────────────────────────
-sendBtn.addEventListener('click', sendMessage);
-inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+// Navigation
+document.getElementById('cal-prev').addEventListener('click',()=>{
+  if(viewYear===MIN_YEAR&&viewMonth===MIN_MONTH)return;
+  if(viewMonth===0){viewMonth=11;viewYear--;}else viewMonth--;
+  renderCalendar();
+});
+document.getElementById('cal-next').addEventListener('click',()=>{
+  if(viewMonth===11){viewMonth=0;viewYear++;}else viewMonth++;
+  renderCalendar();
 });
 
-// ── Démarrage ────────────────────────────────────────
-(async () => {
-  await loadWhoami();
-  startPolling();
-})();
+// ── Modal création ──
+let modalDate=null;
+function showEventModal(date){
+  modalDate=date;
+  const s=fmtDate(date);
+  document.getElementById('evt-title').value='';
+  document.getElementById('evt-start-date').value=s;
+  document.getElementById('evt-end-date').value=s;
+  document.getElementById('evt-start-time').value='';
+  document.getElementById('evt-end-time').value='';
+  selectedColor='blue';
+  document.querySelectorAll('.color-dot').forEach(d=>{
+    d.classList.toggle('selected',d.dataset.color==='blue');
+  });
+  document.getElementById('event-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('evt-title').focus(),60);
+}
+
+document.querySelectorAll('.color-dot').forEach(dot=>{
+  dot.addEventListener('click',()=>{
+    selectedColor=dot.dataset.color;
+    document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('selected'));
+    dot.classList.add('selected');
+  });
+});
+
+document.getElementById('evt-cancel').addEventListener('click',()=>{
+  document.getElementById('event-modal').classList.remove('open');
+});
+
+document.getElementById('evt-save').addEventListener('click',async()=>{
+  const title=document.getElementById('evt-title').value.trim();
+  if(!title){document.getElementById('evt-title').focus();return;}
+  const payload={
+    title,
+    startDate:document.getElementById('evt-start-date').value,
+    endDate:  document.getElementById('evt-end-date').value||document.getElementById('evt-start-date').value,
+    startTime:document.getElementById('evt-start-time').value,
+    endTime:  document.getElementById('evt-end-time').value,
+    color:    selectedColor,
+  };
+  try{
+    const r=await fetch('/api/calendar/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d=await r.json();
+    if(d.ok){calEvents.push(d.event);renderCalendar();}
+  }catch(e){console.error('saveEvent error',e);}
+  document.getElementById('event-modal').classList.remove('open');
+});
+
+// ── Modal détail ──
+function showDetail(event){
+  detailEvent=event;
+  document.getElementById('detail-colorbar').style.background=EVENT_COLORS[event.color]||EVENT_COLORS.blue;
+  document.getElementById('detail-title').textContent=event.title;
+  let info=`📅 ${fmtDisplayDate(event.startDate)}`;
+  if(event.endDate&&event.endDate!==event.startDate)info+=` → ${fmtDisplayDate(event.endDate)}`;
+  if(event.startTime)info+=`\n🕐 ${event.startTime}${event.endTime?' → '+event.endTime:''}`;
+  document.getElementById('detail-info').style.whiteSpace='pre-line';
+  document.getElementById('detail-info').textContent=info;
+  document.getElementById('detail-modal').classList.add('open');
+}
+document.getElementById('detail-close').addEventListener('click',()=>{
+  document.getElementById('detail-modal').classList.remove('open');
+});
+document.getElementById('detail-delete').addEventListener('click',async()=>{
+  if(!detailEvent)return;
+  try{
+    await fetch(`/api/calendar/events/${detailEvent.id}`,{method:'DELETE'});
+    calEvents=calEvents.filter(e=>e.id!==detailEvent.id);
+    renderCalendar();
+  }catch(e){console.error('deleteEvent error',e);}
+  document.getElementById('detail-modal').classList.remove('open');
+});
+
+// Fermer modals sur clic overlay
+document.getElementById('event-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('event-modal'))
+    document.getElementById('event-modal').classList.remove('open');
+});
+document.getElementById('detail-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('detail-modal'))
+    document.getElementById('detail-modal').classList.remove('open');
+});
+
+// Charger les événements au démarrage
+loadEvents();
+
+/* ════════════════════════════════════════
+   CHAT
+════════════════════════════════════════ */
+let myRole='guest';
+let myName='…';
+let lastMessages=[];
+const guestName=localStorage.getItem('nebudate_guest_name')||'';
+
+const msgsEl   =document.getElementById('chat-messages');
+const emptyEl  =document.getElementById('chat-empty');
+const inputEl  =document.getElementById('chat-input');
+const sendBtn  =document.getElementById('chat-send');
+const statusEl =document.getElementById('chat-status');
+const nameEl   =document.getElementById('my-name');
+
+function fmtTime(iso){const d=new Date(iso);return d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+function fmtDay(iso){const d=new Date(iso);return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});}
+function sameDayStr(a,b){return a.slice(0,10)===b.slice(0,10);}
+
+function renderMessages(msgs){
+  if(!msgs.length){msgsEl.innerHTML='';msgsEl.appendChild(emptyEl);return;}
+  if(emptyEl.parentNode)emptyEl.parentNode.removeChild(emptyEl);
+  msgsEl.innerHTML='';
+  let lastDate=null;
+  msgs.forEach(m=>{
+    if(!lastDate||!sameDayStr(m.timestamp,lastDate)){
+      const sep=document.createElement('div');sep.className='date-sep';sep.textContent=fmtDay(m.timestamp);
+      msgsEl.appendChild(sep);lastDate=m.timestamp;
+    }
+    const isMe=(myRole==='owner'&&m.sender==='owner')||(myRole==='guest'&&m.sender==='guest');
+    const row=document.createElement('div');row.className='msg-row '+(isMe?'me':'other');
+    const nm=document.createElement('div');nm.className='msg-name';nm.textContent=m.name;
+    const bbl=document.createElement('div');bbl.className='msg-bubble';bbl.textContent=m.text;
+    const tm=document.createElement('div');tm.className='msg-time';tm.textContent=fmtTime(m.timestamp);
+    row.appendChild(nm);row.appendChild(bbl);row.appendChild(tm);
+    msgsEl.appendChild(row);
+  });
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+
+async function loadWhoami(){
+  try{
+    const r=await fetch('/api/chat/whoami');
+    const d=await r.json();
+    myRole=d.role;
+    myName=d.role==='owner'?d.name:(guestName||d.name);
+    nameEl.textContent=myName;
+  }catch(e){nameEl.textContent='?';}
+}
+
+async function fetchMessages(){
+  try{
+    const r=await fetch('/api/chat/messages');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const msgs=await r.json();
+    const sig=msgs.map(m=>m.timestamp+m.text).join('|');
+    const lastSig=lastMessages.map(m=>m.timestamp+m.text).join('|');
+    if(sig!==lastSig){lastMessages=msgs;renderMessages(msgs);}
+    statusEl.textContent='';
+  }catch(e){statusEl.textContent='⚠ Connexion interrompue…';}
+}
+
+async function sendMessage(){
+  const text=inputEl.value.trim();
+  if(!text)return;
+  sendBtn.disabled=true;inputEl.disabled=true;statusEl.textContent='Envoi…';
+  try{
+    await fetch('/api/chat/send',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text,guestName:guestName||undefined}),
+    });
+    inputEl.value='';await fetchMessages();statusEl.textContent='';
+  }catch(e){statusEl.textContent='⚠ Erreur lors de l\'envoi';}
+  finally{sendBtn.disabled=false;inputEl.disabled=false;inputEl.focus();}
+}
+
+sendBtn.addEventListener('click',sendMessage);
+inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+
+(async()=>{await loadWhoami();fetchMessages();setInterval(fetchMessages,2500);})();
 </script>
 </body>
 </html>

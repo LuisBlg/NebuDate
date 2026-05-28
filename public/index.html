@@ -127,6 +127,55 @@
       from { transform:rotate(6deg)   scaleY(.60); }
       to   { transform:rotate(42deg)  scaleY(1.0); }
     }
+
+    /* ══ MODAL NOM ══ */
+    #name-modal {
+      display:none; position:fixed; inset:0; z-index:200;
+      background:rgba(0,3,16,.82); backdrop-filter:blur(8px);
+      align-items:center; justify-content:center;
+    }
+    #name-modal.open { display:flex; }
+    .name-box {
+      background:rgba(4,12,34,.92);
+      border:1px solid rgba(154,220,255,.2);
+      border-radius:6px; padding:2rem 2.4rem 1.8rem;
+      box-shadow:0 0 60px rgba(26,63,140,.55),0 0 0 1px rgba(154,220,255,.06) inset;
+      display:flex; flex-direction:column; gap:1.1rem; width:320px;
+      animation:boxIn .3s cubic-bezier(.22,.68,0,1.2);
+    }
+    @keyframes boxIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+    .name-box h2 {
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.95rem;
+      letter-spacing:.18em; text-transform:uppercase;
+      background:linear-gradient(130deg,#9adcff,#fff 50%,#c8b8ff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .name-box p {
+      font-family:'Syne',sans-serif; font-size:.85rem;
+      color:rgba(195,220,255,.65); letter-spacing:.04em;
+    }
+    .name-input {
+      background:rgba(5,15,40,.7); border:1px solid rgba(154,220,255,.18);
+      border-radius:3px; padding:.6rem .85rem;
+      font-family:'Syne',sans-serif; font-size:.95rem;
+      color:rgba(220,240,255,.95); outline:none; cursor:auto !important;
+      caret-color:rgba(154,220,255,.9); transition:border-color .2s;
+    }
+    .name-input:focus { border-color:rgba(154,220,255,.42); }
+    .name-input::placeholder { color:rgba(154,220,255,.25); }
+    .name-submit {
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.75rem;
+      letter-spacing:.16em; text-transform:uppercase; padding:.65rem 1.4rem;
+      border:1px solid rgba(154,220,255,.25); border-radius:3px;
+      background:linear-gradient(160deg,rgba(10,28,70,.9),rgba(18,45,100,.9));
+      color:rgba(154,220,255,.8); cursor:none !important; align-self:flex-end;
+      transition:color .2s,box-shadow .2s,transform .15s,border-color .2s;
+    }
+    .name-submit:hover {
+      color:#9adcff; border-color:rgba(154,220,255,.5);
+      box-shadow:0 0 18px rgba(154,220,255,.25); transform:translateY(-1px);
+    }
+    .name-submit:active { transform:scale(.97); }
   </style>
 </head>
 <body>
@@ -144,6 +193,16 @@
 
 <button class="btn" id="btn-autres">Autres</button>
 <div id="logo-small">NebuDate</div>
+
+<!-- MODAL NOM -->
+<div id="name-modal">
+  <div class="name-box">
+    <h2>Réservation Louis</h2>
+    <p>Pour apparaître dans le chat, entrez votre prénom.</p>
+    <input class="name-input" id="name-input" type="text" placeholder="Votre prénom…" maxlength="30" autocomplete="off">
+    <button class="name-submit" id="name-submit">Continuer →</button>
+  </div>
+</div>
 
 <!-- COCCINELLE -->
 <div id="cursor-bug">
@@ -337,15 +396,36 @@ setInterval(()=>{
   if(lastMX>=r.l&&lastMX<=r.r&&lastMY>=r.t&&lastMY<=r.b)teleportAway(lastMX,lastMY);
 },150);
 
-/* ── CLIC LOUIS → louis.html ── */
-btnLouis.addEventListener('click',()=>{
-  autresActive=false;
+/* ── MODAL NOM + NAVIGATION LOUIS ── */
+const nameModal  = document.getElementById('name-modal');
+const nameInput  = document.getElementById('name-input');
+const nameSubmit = document.getElementById('name-submit');
+
+// Pré-remplir si déjà saisi
+const storedName = localStorage.getItem('nebudate_guest_name');
+if (storedName) nameInput.value = storedName;
+
+function doNavigate() {
+  const n = nameInput.value.trim();
+  if (n) localStorage.setItem('nebudate_guest_name', n);
+  else   localStorage.removeItem('nebudate_guest_name');
+  // Fade out
+  autresActive = false;
   mainContent.style.transition='opacity .75s ease'; mainContent.style.opacity='0';
   btnAutres.style.transition='opacity .75s ease';   btnAutres.style.opacity='0';
+  nameModal.style.transition='opacity .5s ease';    nameModal.style.opacity='0';
   document.getElementById('cursor-bug').style.transition='opacity .75s ease';
   document.getElementById('cursor-bug').style.opacity='0';
   setTimeout(()=>{ window.location.href='louis.html'; }, 800);
+}
+
+btnLouis.addEventListener('click',()=>{
+  nameModal.classList.add('open');
+  setTimeout(()=>nameInput.focus(), 50);
 });
+
+nameSubmit.addEventListener('click', doNavigate);
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') doNavigate(); });
 
 /* ── COCCINELLE – orientation + battement ── */
 const bug      = document.getElementById('cursor-bug');
