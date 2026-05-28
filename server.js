@@ -1,115 +1,113 @@
 const express = require('express');
-const path = require('path');
-const { Datastore } = require('@google-cloud/datastore');
+const path    = require('path');
 
 const app = express();
-app.set('trust proxy', true); // Obligatoire derrière Cloud Run / load balancer
+app.set('trust proxy', true);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ══════════════════════════════════════════════════════
-//  ⚙️  CONFIGURATION – Mettez ici vos adresses IP
-//  Vous pouvez aussi définir la variable d'env OWNER_IPS
-//  (séparées par des virgules) dans Cloud Run.
-// ══════════════════════════════════════════════════════
-const OWNER_IPS = process.env.OWNER_IPS
-  ? process.env.OWNER_IPS.split(',').map(ip => ip.trim())
-  : [
-      '127.0.0.1',   // localhost (dev)
-      '::1',         // localhost IPv6
-      // Ajoutez vos IPs ici, ex:
-      // '90.12.34.56',
-      // '82.64.12.89',
-    ];
+// ╔══════════════════════════════════════════════════════╗
+// ║  ⚙️  METTEZ VOS ADRESSES IP ICI (une par ligne)     ║
+// ║  Cherchez "votre ip" sur Google pour la connaître   ║
+// ╚══════════════════════════════════════════════════════╝
+const OWNER_IPS = [
+  '127.0.0.1',
+  '::1',
+  '81.65.172.242',
+];
 
-// Noms affichés dans le chat
-const OWNER_NAME  = process.env.OWNER_NAME  || 'Louis';
-const GUEST_NAME  = process.env.GUEST_NAME  || 'Invité';
+const OWNER_NAME = 'Hôte';
+const GUEST_NAME = 'Invité';
 
-// ══════════════════════════════════════════════════════
-const datastore = new Datastore();
+// ── Stockage (Datastore si dispo, sinon mémoire) ─────
+let useDatastore = false;
+let datastore    = null;
+const memMessages = [];
 
+try {
+  const { Datastore } = require('@google-cloud/datastore');
+  datastore    = new Datastore();
+  useDatastore = true;
+  console.log('Datastore OK');
+} catch (e) {
+  console.warn('Datastore indisponible, mode memoire:', e.message);
+}
+
+// ── Normalisation IP (Cloud Run ajoute ::ffff: parfois) ─
 function getClientIP(req) {
   const forwarded = req.headers['x-forwarded-for'];
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.socket.remoteAddress || req.ip;
+  const raw = forwarded ? forwarded.split(',')[0].trim()
+                        : (req.socket?.remoteAddress || req.ip || '');
+  return raw.replace(/^::ffff:/, '');
 }
 
 function isOwner(req) {
-  return OWNER_IPS.includes(getClientIP(req));
+  const ip = getClientIP(req);
+  const normalizedOwners = OWNER_IPS.map(i => i.replace(/^::ffff:/, ''));
+  const match = normalizedOwners.includes(ip);
+  console.log(`IP=${ip} role=${match ? 'HOTE' : 'invite'}`);
+  return match;
 }
 
-// ── GET /api/chat/whoami ─────────────────────────────
-// Indique à l'interface quel utilisateur vous êtes
+// ── Routes ───────────────────────────────────────────
 app.get('/api/chat/whoami', (req, res) => {
   const owner = isOwner(req);
-  res.json({
-    role: owner ? 'owner' : 'guest',
-    name: owner ? OWNER_NAME : GUEST_NAME,
-    ip: getClientIP(req),
-  });
+  res.json({ role: owner ? 'owner' : 'guest', name: owner ? OWNER_NAME : GUEST_NAME, ip: getClientIP(req) });
 });
 
-// ── GET /api/chat/messages ───────────────────────────
-// Retourne les 200 derniers messages (du plus ancien au plus récent)
 app.get('/api/chat/messages', async (req, res) => {
+  if (!useDatastore) return res.json(memMessages);
   try {
-    const query = datastore
-      .createQuery('NebuChatMessage')
-      .order('timestamp')
-      .limit(200);
-    const [messages] = await datastore.runQuery(query);
-    res.json(messages.map(m => ({
-      id:        m[datastore.KEY].id,
-      sender:    m.sender,
-      name:      m.name,
-      text:      m.text,
-      timestamp: m.timestamp,
+    const [msgs] = await datastore.runQuery(
+      datastore.createQuery('NebuChatMessage').order('timestamp').limit(200)
+    );
+    res.json(msgs.map(m => ({
+      id: String(m[datastore.KEY].id || ''),
+      sender: m.sender, name: m.name, text: m.text, timestamp: m.timestamp,
     })));
   } catch (err) {
-    console.error('GET /api/chat/messages error:', err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    console.error('Datastore GET error:', err.message);
+    res.json(memMessages);
   }
 });
 
-// ── POST /api/chat/send ──────────────────────────────
-// Enregistre un message dans Datastore
 app.post('/api/chat/send', async (req, res) => {
   const { text } = req.body;
-  if (!text || !text.trim()) return res.status(400).json({ error: 'Message vide' });
+  if (!text?.trim()) return res.status(400).json({ error: 'Message vide' });
 
-  const owner  = isOwner(req);
-  const sender = owner ? 'owner' : 'guest';
-  const name   = owner ? OWNER_NAME : GUEST_NAME;
-
-  const key    = datastore.key('NebuChatMessage');
-  const entity = {
-    key,
-    data: [
-      { name: 'sender',    value: sender },
-      { name: 'name',      value: name },
-      { name: 'text',      value: text.trim().slice(0, 500) },
-      { name: 'timestamp', value: new Date().toISOString() },
-    ],
+  const owner = isOwner(req);
+  const msg = {
+    sender: owner ? 'owner' : 'guest',
+    name:   owner ? OWNER_NAME : GUEST_NAME,
+    text:   text.trim().slice(0, 500),
+    timestamp: new Date().toISOString(),
   };
 
-  try {
-    await datastore.save(entity);
-    res.json({ ok: true, sender, name });
-  } catch (err) {
-    console.error('POST /api/chat/send error:', err);
-    res.status(500).json({ error: 'Erreur sauvegarde' });
+  memMessages.push(msg);
+  if (memMessages.length > 200) memMessages.shift();
+
+  if (useDatastore) {
+    try {
+      await datastore.save({
+        key: datastore.key('NebuChatMessage'),
+        data: [
+          { name: 'sender',    value: msg.sender    },
+          { name: 'name',      value: msg.name      },
+          { name: 'text',      value: msg.text      },
+          { name: 'timestamp', value: msg.timestamp },
+        ],
+      });
+    } catch (err) {
+      console.error('Datastore SAVE error:', err.message);
+    }
   }
+
+  res.json({ ok: true, sender: msg.sender, name: msg.name });
 });
 
-// ── GET /api/health ──────────────────────────────────
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', message: 'API fonctionne' });
+  res.json({ ok: true, datastore: useDatastore });
 });
 
-// ── Démarrage ────────────────────────────────────────
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Owner IPs: ${OWNER_IPS.join(', ')}`);
-});
+app.listen(PORT, () => console.log(`Server on port ${PORT}`));
