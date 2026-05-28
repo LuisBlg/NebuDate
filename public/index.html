@@ -2,42 +2,470 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Cloud App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NebuDate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
-    body{
-      margin:0;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:#0f172a;
-      color:white;
-      font-family:Arial;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000510;
+      cursor: default;
     }
 
-    .card{
-      text-align:center;
-      padding:40px;
-      border-radius:20px;
-      background:#1e293b;
-      box-shadow:0 0 30px rgba(0,0,0,0.3);
+    /* ─── CANVAS FOND FIXE ─── */
+    #space-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
 
-    h1{
-      font-size:3rem;
+    /* ─── CONTENU PRINCIPAL ─── */
+    #main-content {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.2rem;
+      pointer-events: none;
     }
 
-    p{
-      opacity:0.8;
+    /* ─── LOGO PRINCIPAL ─── */
+    .logo-main {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3.2rem, 9vw, 7.5rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(
+        130deg,
+        #9adcff 0%,
+        #ddf0ff 30%,
+        #ffffff 50%,
+        #d4bfff 72%,
+        #8ba8ff 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pulseGlow 4s ease-in-out infinite alternate;
+      will-change: filter;
+    }
+
+    @keyframes pulseGlow {
+      from { filter: drop-shadow(0 0 18px rgba(154,220,255,0.55)) drop-shadow(0 0 50px rgba(139,168,255,0.2)); }
+      to   { filter: drop-shadow(0 0 35px rgba(154,220,255,0.95)) drop-shadow(0 0 90px rgba(212,191,255,0.45)); }
+    }
+
+    /* ─── QUESTION ─── */
+    .question {
+      font-family: 'Syne', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.95rem, 2.2vw, 1.35rem);
+      color: rgba(195, 220, 255, 0.80);
+      letter-spacing: 0.06em;
+      text-align: center;
+      text-shadow: 0 0 22px rgba(154,220,255,0.35);
+    }
+
+    /* ─── ZONE BOUTONS ─── */
+    .buttons-zone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      pointer-events: all;
+    }
+
+    /* ─── STYLE BOUTON BASE ─── */
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.85rem 2.6rem;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+    }
+
+    /* ─── LOUIS ─── */
+    #btn-louis {
+      background: linear-gradient(145deg, #0d2448, #1a3f7a);
+      color: #a8dcff;
+      border-color: rgba(154,220,255,0.35);
+      box-shadow:
+        0 0 22px rgba(26,63,122,0.6),
+        inset 0 0 18px rgba(154,220,255,0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    #btn-louis::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, transparent 40%, rgba(154,220,255,0.08));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #btn-louis:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow:
+        0 0 45px rgba(26,63,122,0.9),
+        0 0 18px rgba(154,220,255,0.45),
+        inset 0 0 20px rgba(154,220,255,0.08);
+    }
+    #btn-louis:hover::after { opacity: 1; }
+
+    #btn-louis:active {
+      transform: scale(0.97);
+      transition: transform 0.1s;
+    }
+
+    /* ─── AUTRES (positionné fixe via JS) ─── */
+    #btn-autres {
+      background: linear-gradient(145deg, #1c0e36, #3a1e6e);
+      color: #c4adff;
+      border-color: rgba(196,173,255,0.28);
+      box-shadow: 0 0 22px rgba(58,30,110,0.6);
+      position: fixed;
+      transition: box-shadow 0.2s;
+      /* PAS de transition sur top/left — le déplacement doit être immédiat */
+    }
+
+    #btn-autres:hover {
+      box-shadow: 0 0 40px rgba(58,30,110,0.9), 0 0 15px rgba(196,173,255,0.3);
+    }
+
+    /* ─── PETIT LOGO HAUT-DROITE ─── */
+    #logo-small {
+      position: fixed;
+      top: 1.4rem;
+      right: 2rem;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(130deg, #9adcff 0%, #ffffff 45%, #c8b8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 10px rgba(154,220,255,0.5));
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.9s ease;
     }
   </style>
 </head>
-
 <body>
-  <div class="card">
-    <h1>Testsssss</h1>
-    <p>Ton app tourne sur Google Cloud Run</p>
+
+  <canvas id="space-canvas"></canvas>
+
+  <div id="main-content">
+    <h1 class="logo-main">NebuDate</h1>
+    <p class="question">Avec qui voulez-vous réserver un date&nbsp;?</p>
+    <div class="buttons-zone">
+      <button class="btn" id="btn-louis">Louis</button>
+    </div>
   </div>
+
+  <button class="btn" id="btn-autres">Autres</button>
+
+  <div id="logo-small">NebuDate</div>
+
+  <script>
+  /* ================================================================
+     FOND ESPACE – Canvas animé
+  ================================================================ */
+  const canvas = document.getElementById('space-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── Étoiles fixes ── */
+  const NSTARS = 380;
+  const stars  = Array.from({ length: NSTARS }, () => ({
+    x:      Math.random(),
+    y:      Math.random(),
+    r:      Math.pow(Math.random(), 2) * 2 + 0.25,
+    base:   Math.random() * 0.6 + 0.25,
+    speed:  Math.random() * 0.8 + 0.3,
+    phase:  Math.random() * Math.PI * 2,
+  }));
+
+  /* ── Nébuleuses ── */
+  const nebulae = [
+    { cx:0.14, cy:0.28, rx:0.32, ry:0.20, rot:0.4,  c1:'rgba(55,0,110,',  c2:'rgba(0,35,95,'  },
+    { cx:0.78, cy:0.62, rx:0.26, ry:0.18, rot:-0.2, c1:'rgba(0,70,110,',  c2:'rgba(50,0,90,'  },
+    { cx:0.52, cy:0.12, rx:0.22, ry:0.14, rot:0.1,  c1:'rgba(0,55,80,',   c2:'rgba(35,0,95,'  },
+    { cx:0.85, cy:0.80, rx:0.20, ry:0.12, rot:0.6,  c1:'rgba(80,0,80,',   c2:'rgba(0,40,80,'  },
+  ];
+
+  /* ── Planète ── */
+  const PLT = { cx:0.80, cy:0.20, r:55 };
+
+  /* ── Étoiles filantes ── */
+  let shooters = [];
+  let lastSpawn = 0;
+  let nextDelay = 3 + Math.random() * 5; // secondes
+
+  function spawnShooter() {
+    const angle = Math.PI / 5 + (Math.random() - 0.5) * 0.4;
+    shooters.push({
+      x0:    Math.random() * 0.7,
+      y0:    Math.random() * 0.35,
+      angle,
+      len:   90 + Math.random() * 130,
+      spd:   0.35 + Math.random() * 0.25, // fraction de W par sec
+      life:  0,
+      dur:   1.6 + Math.random() * 0.8,
+    });
+  }
+
+  /* ── Boucle principale ── */
+  let last = 0;
+  function draw(ts) {
+    const dt = Math.min((ts - last) / 1000, 0.05);
+    last = ts;
+
+    /* Fond dégradé */
+    const bg = ctx.createLinearGradient(0, 0, W * 0.4, H);
+    bg.addColorStop(0,   '#000610');
+    bg.addColorStop(0.5, '#020a1c');
+    bg.addColorStop(1,   '#010611');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    /* Nébuleuses */
+    nebulae.forEach(n => {
+      const nx = n.cx * W, ny = n.cy * H;
+      const nrx = n.rx * Math.min(W, H), nry = n.ry * Math.min(W, H);
+      ctx.save();
+      ctx.translate(nx, ny);
+      ctx.rotate(n.rot);
+      ctx.scale(1, nry / nrx);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, nrx);
+      g.addColorStop(0,   n.c1 + '0.16)');
+      g.addColorStop(0.45,n.c2 + '0.08)');
+      g.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(0, 0, nrx, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    /* Planète */
+    {
+      const px = PLT.cx * W, py = PLT.cy * H, pr = PLT.r;
+      /* anneau derrière */
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(-0.28);
+      ctx.scale(1, 0.28);
+      ctx.beginPath();
+      ctx.arc(0, 0, pr * 2.1, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(90,140,210,0.18)';
+      ctx.lineWidth   = pr * 0.22;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, pr * 1.65, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(110,160,230,0.12)';
+      ctx.lineWidth   = pr * 0.14;
+      ctx.stroke();
+      ctx.restore();
+
+      /* sphère */
+      const pg = ctx.createRadialGradient(px - pr*0.3, py - pr*0.3, pr*0.08, px, py, pr);
+      pg.addColorStop(0,   '#4b6fa8');
+      pg.addColorStop(0.4, '#1c3a60');
+      pg.addColorStop(0.85,'#0c1e34');
+      pg.addColorStop(1,   '#05101e');
+      ctx.beginPath();
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
+      ctx.fillStyle = pg;
+      ctx.fill();
+
+      /* atmosphère */
+      const atm = ctx.createRadialGradient(px, py, pr * 0.82, px, py, pr * 1.35);
+      atm.addColorStop(0,   'rgba(80,150,230,0.16)');
+      atm.addColorStop(1,   'rgba(80,150,230,0)');
+      ctx.beginPath();
+      ctx.arc(px, py, pr * 1.35, 0, Math.PI * 2);
+      ctx.fillStyle = atm;
+      ctx.fill();
+    }
+
+    /* Étoiles */
+    const t = ts / 1000;
+    stars.forEach(s => {
+      const flicker = 0.65 + 0.35 * Math.sin(t * s.speed + s.phase);
+      const op = s.base * flicker;
+      const sx = s.x * W, sy = s.y * H;
+      ctx.beginPath();
+      ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(240,248,255,${op})`;
+      ctx.fill();
+      if (s.r > 1.3) {
+        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 4.5);
+        glow.addColorStop(0, `rgba(200,230,255,${op * 0.45})`);
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.arc(sx, sy, s.r * 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+      }
+    });
+
+    /* Étoiles filantes */
+    lastSpawn += dt;
+    if (lastSpawn >= nextDelay) {
+      spawnShooter();
+      lastSpawn  = 0;
+      nextDelay  = 3 + Math.random() * 6;
+    }
+
+    shooters = shooters.filter(ss => ss.life < ss.dur);
+    shooters.forEach(ss => {
+      ss.life += dt;
+      const prog  = ss.life / ss.dur;
+      const alpha = prog < 0.15 ? prog / 0.15 : prog > 0.75 ? (1 - prog) / 0.25 : 1;
+
+      const cx = (ss.x0 + Math.cos(ss.angle) * prog * 0.55) * W;
+      const cy = (ss.y0 + Math.sin(ss.angle) * prog * 0.35) * H;
+      const tail = ss.len * Math.min(prog * 5, 1);
+      const ex   = cx - Math.cos(ss.angle) * tail;
+      const ey   = cy - Math.sin(ss.angle) * tail;
+
+      const sg = ctx.createLinearGradient(ex, ey, cx, cy);
+      sg.addColorStop(0,   'rgba(255,255,255,0)');
+      sg.addColorStop(0.6, `rgba(190,235,255,${alpha * 0.5})`);
+      sg.addColorStop(1,   `rgba(255,255,255,${alpha * 0.95})`);
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(cx, cy);
+      ctx.strokeStyle = sg;
+      ctx.lineWidth   = 1.8;
+      ctx.stroke();
+
+      const tip = ctx.createRadialGradient(cx, cy, 0, cx, cy, 7);
+      tip.addColorStop(0, `rgba(255,255,255,${alpha * 0.9})`);
+      tip.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+      ctx.fillStyle = tip;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+
+  /* ================================================================
+     BOUTON AUTRES – fuit le curseur
+  ================================================================ */
+  const btnAutres = document.getElementById('btn-autres');
+  const btnLouis  = document.getElementById('btn-louis');
+  const mainContent = document.getElementById('main-content');
+  const logoSmall   = document.getElementById('logo-small');
+
+  let autresX = 0, autresY = 0;
+  let autresActive = true;
+
+  function placeAutres() {
+    const lr = btnLouis.getBoundingClientRect();
+    autresX = lr.right + 32;
+    autresY = lr.top;
+    applyAutresPos();
+  }
+
+  function applyAutresPos() {
+    btnAutres.style.left = autresX + 'px';
+    btnAutres.style.top  = autresY + 'px';
+  }
+
+  /* Placement initial après chargement polices */
+  document.fonts.ready.then(placeAutres);
+  window.addEventListener('resize', placeAutres);
+
+  const FLEE_R   = 130; // rayon de détection (px)
+  const FLEE_D   = 170; // distance de fuite (px)
+
+  document.addEventListener('mousemove', e => {
+    if (!autresActive) return;
+    const bw = btnAutres.offsetWidth  || 120;
+    const bh = btnAutres.offsetHeight || 44;
+    const cx = autresX + bw / 2;
+    const cy = autresY + bh / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < FLEE_R) {
+      const angle = Math.atan2(dy, dx);
+      let nx = autresX - Math.cos(angle) * FLEE_D;
+      let ny = autresY - Math.sin(angle) * FLEE_D;
+
+      /* Rebondir sur les bords */
+      const margin = 10;
+      nx = Math.max(margin, Math.min(window.innerWidth  - bw - margin, nx));
+      ny = Math.max(margin, Math.min(window.innerHeight - bh - margin, ny));
+
+      autresX = nx;
+      autresY = ny;
+      applyAutresPos();
+    }
+  });
+
+
+  /* ================================================================
+     CLIC LOUIS – transition
+  ================================================================ */
+  btnLouis.addEventListener('click', () => {
+    autresActive = false;
+
+    /* Fade out tout */
+    mainContent.style.transition = 'opacity 0.75s ease';
+    mainContent.style.opacity    = '0';
+    btnAutres.style.transition   = 'opacity 0.75s ease';
+    btnAutres.style.opacity      = '0';
+
+    setTimeout(() => {
+      mainContent.style.display  = 'none';
+      btnAutres.style.display    = 'none';
+
+      /* Apparition petit logo */
+      logoSmall.style.visibility = 'visible';
+      requestAnimationFrame(() => {
+        logoSmall.style.opacity = '1';
+      });
+    }, 780);
+  });
+  </script>
 </body>
 </html>
