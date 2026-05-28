@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NebuDate – Louis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#000510; cursor:none !important; }
+    * { cursor:none !important; }
+ 
+    #space-canvas { position:fixed; inset:0; width:100%; height:100%; z-index:0; }
+ 
+    /* ── Logo haut-droite ── */
+    #logo-small {
+      position:fixed; top:1.4rem; right:2rem; z-index:100;
+      font-family:'Orbitron',sans-serif; font-weight:900; font-size:1.1rem;
+      letter-spacing:.18em; text-transform:uppercase;
+      background:linear-gradient(130deg,#9adcff 0%,#ffffff 45%,#c8b8ff 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      filter:drop-shadow(0 0 10px rgba(154,220,255,.5));
+      opacity:0; animation:fadeIn .9s .1s ease forwards;
+    }
+    @keyframes fadeIn { to { opacity:1; } }
+ 
+    /* ── Contenu principal ── */
+    #main-content {
+      position:fixed; inset:0; z-index:10;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:2rem; pointer-events:none;
+      opacity:0; animation:fadeIn .9s .2s ease forwards;
+    }
+ 
+    .page-label {
+      font-family:'Syne',sans-serif; font-weight:300;
+      font-size:clamp(.8rem,1.6vw,1rem); letter-spacing:.25em; text-transform:uppercase;
+      color:rgba(154,220,255,.5);
+    }
+ 
+    .page-title {
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:clamp(2rem,6vw,5rem); letter-spacing:.14em; text-transform:uppercase;
+      background:linear-gradient(130deg,#9adcff 0%,#e0f4ff 40%,#ffffff 55%,#c8b8ff 80%,#8ba8ff 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      filter:drop-shadow(0 0 22px rgba(154,220,255,.5));
+    }
+ 
+    /* Séparateur lumineux */
+    .sep {
+      width:clamp(80px,12vw,140px); height:1px;
+      background:linear-gradient(90deg,transparent,rgba(154,220,255,.5),transparent);
+    }
+ 
+    /* Zone de contenu – à compléter */
+    .content-area {
+      display:flex; flex-direction:column; align-items:center; gap:1rem;
+      pointer-events:all;
+    }
+ 
+    .placeholder-text {
+      font-family:'Syne',sans-serif; font-weight:300;
+      font-size:clamp(.85rem,1.8vw,1.1rem); letter-spacing:.06em;
+      color:rgba(195,220,255,.45); text-align:center;
+      /* ── Remplacez ce bloc par votre contenu ── */
+    }
+ 
+    /* Bouton retour */
+    .btn-back {
+      margin-top:1.5rem;
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:.78rem;
+      letter-spacing:.16em; text-transform:uppercase; padding:.7rem 2rem;
+      border-radius:2px; border:none; outline:none;
+      background:linear-gradient(160deg,#080f22 0%,#0e1e42 100%);
+      color:rgba(154,220,255,.55); cursor:none !important;
+      box-shadow:0 0 0 1px rgba(154,220,255,.12),inset 0 1px 0 rgba(154,220,255,.06);
+      transition:color .25s,box-shadow .25s,transform .25s;
+      pointer-events:all;
+    }
+    .btn-back:hover {
+      color:rgba(154,220,255,.9);
+      transform:translateY(-2px);
+      box-shadow:0 0 0 1px rgba(154,220,255,.35),0 4px 24px rgba(26,63,140,.6),0 0 16px rgba(154,220,255,.2);
+    }
+    .btn-back:active { transform:scale(.97); }
+ 
+    /* ── Coccinelle ── */
+    #cursor-bug { position:fixed; pointer-events:none; z-index:99999; top:0; left:0; width:0; height:0; }
+    #bug-body { position:absolute; transform:translate(-50%,-28%); will-change:transform; }
+    .fw { opacity:0; transition:opacity .12s ease; }
+    .fw-l { transform-box:fill-box; transform-origin:right center; }
+    .fw-r { transform-box:fill-box; transform-origin:left center; }
+    #cursor-bug.is-flying .fw  { opacity:1; }
+    #cursor-bug.is-flying .fw-l { animation:flapL .13s ease-in-out infinite alternate; }
+    #cursor-bug.is-flying .fw-r { animation:flapR .13s ease-in-out infinite alternate; }
+    @keyframes flapL { from{transform:rotate(-6deg)  scaleY(.60);} to{transform:rotate(-42deg) scaleY(1);} }
+    @keyframes flapR { from{transform:rotate(6deg)   scaleY(.60);} to{transform:rotate(42deg)  scaleY(1);} }
+  </style>
+</head>
+<body>
+ 
+<canvas id="space-canvas"></canvas>
+ 
+<div id="logo-small">NebuDate</div>
+ 
+<div id="main-content">
+  <span class="page-label">Réservation avec</span>
+  <h1 class="page-title">Louis</h1>
+  <div class="sep"></div>
+  <div class="content-area">
+    <!-- ════════════════════════════════════════
+         VOTRE CONTENU ICI
+         ════════════════════════════════════════ -->
+    <p class="placeholder-text">[ contenu de la page Louis ]</p>
+    <button class="btn-back" onclick="window.location.href='index.html'">← Retour</button>
+  </div>
+</div>
+ 
+<!-- COCCINELLE (identique à index.html) -->
+<div id="cursor-bug">
+  <div id="bug-body">
+    <svg viewBox="0 0 80 64" width="76" height="70" style="overflow:visible" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="elytra-shine2" cx="38%" cy="28%" r="62%">
+          <stop offset="0%"   stop-color="rgba(255,160,160,.40)"/>
+          <stop offset="55%"  stop-color="rgba(180,0,0,.05)"/>
+          <stop offset="100%" stop-color="rgba(60,0,0,.15)"/>
+        </radialGradient>
+        <filter id="wing-blur2" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.6"/>
+        </filter>
+      </defs>
+      <g class="fw fw-l">
+        <path d="M40,31 C34,20 16,12 4,20 C-3,27 2,40 12,40 C25,43 38,35 40,31Z"
+              fill="rgba(210,238,255,.52)" stroke="rgba(170,215,255,.55)" stroke-width=".6" filter="url(#wing-blur2)"/>
+        <line x1="40" y1="31" x2="14" y2="19" stroke="rgba(180,220,255,.4)" stroke-width=".7"/>
+        <line x1="40" y1="31" x2="6"  y2="29" stroke="rgba(180,220,255,.3)" stroke-width=".6"/>
+        <line x1="40" y1="31" x2="14" y2="40" stroke="rgba(180,220,255,.3)" stroke-width=".5"/>
+      </g>
+      <g class="fw fw-r">
+        <path d="M40,31 C46,20 64,12 76,20 C83,27 78,40 68,40 C55,43 42,35 40,31Z"
+              fill="rgba(210,238,255,.52)" stroke="rgba(170,215,255,.55)" stroke-width=".6" filter="url(#wing-blur2)"/>
+        <line x1="40" y1="31" x2="66" y2="19" stroke="rgba(180,220,255,.4)" stroke-width=".7"/>
+        <line x1="40" y1="31" x2="74" y2="29" stroke="rgba(180,220,255,.3)" stroke-width=".6"/>
+        <line x1="40" y1="31" x2="66" y2="40" stroke="rgba(180,220,255,.3)" stroke-width=".5"/>
+      </g>
+      <ellipse cx="41.5" cy="38" rx="13.5" ry="17.5" fill="rgba(0,0,0,.30)"/>
+      <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="#c41515"/>
+      <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="url(#elytra-shine2)"/>
+      <ellipse cx="36.5" cy="26" rx="4.5" ry="6.5" fill="rgba(255,255,255,.12)" transform="rotate(-12,36.5,26)"/>
+      <line x1="40" y1="19" x2="40" y2="52.5" stroke="#0d0d0d" stroke-width="1.4" stroke-linecap="round"/>
+      <ellipse cx="40" cy="36" rx="13.5" ry="17.5" fill="none" stroke="#0d0d0d" stroke-width="1.3"/>
+      <circle cx="33.5" cy="28" r="3.4" fill="#0d0d0d"/>
+      <circle cx="46.5" cy="28" r="3.4" fill="#0d0d0d"/>
+      <circle cx="33"   cy="39" r="3.0" fill="#0d0d0d"/>
+      <circle cx="47"   cy="39" r="3.0" fill="#0d0d0d"/>
+      <circle cx="35.5" cy="49" r="2.1" fill="#0d0d0d"/>
+      <circle cx="44.5" cy="49" r="2.1" fill="#0d0d0d"/>
+      <circle cx="40" cy="16" r="10" fill="#111"/>
+      <ellipse cx="37" cy="13" rx="3.2" ry="2.2" fill="rgba(255,255,255,.14)" transform="rotate(-20,37,13)"/>
+      <circle cx="35.5" cy="15" r="2.2" fill="#000"/>
+      <circle cx="44.5" cy="15" r="2.2" fill="#000"/>
+      <circle cx="35"   cy="14.5" r=".7" fill="rgba(255,255,255,.6)"/>
+      <circle cx="44"   cy="14.5" r=".7" fill="rgba(255,255,255,.6)"/>
+      <path d="M36,8 Q27,1 22,-4"  stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M44,8 Q53,1 58,-4"  stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="-4" r="2.2" fill="#222"/>
+      <circle cx="58" cy="-4" r="2.2" fill="#222"/>
+    </svg>
+  </div>
+</div>
+ 
+<script>
+/* ── CANVAS ── */
+const canvas=document.getElementById('space-canvas'),ctx=canvas.getContext('2d');
+let W,H;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const NSTARS=380;
+const stars=Array.from({length:NSTARS},()=>({
+  x:Math.random(),y:Math.random(),r:Math.pow(Math.random(),2)*2+.25,
+  base:Math.random()*.6+.25,speed:Math.random()*.8+.3,phase:Math.random()*Math.PI*2
+}));
+const nebulae=[
+  {cx:.14,cy:.28,rx:.32,ry:.20,rot:.4, c1:'rgba(55,0,110,', c2:'rgba(0,35,95,'},
+  {cx:.78,cy:.62,rx:.26,ry:.18,rot:-.2,c1:'rgba(0,70,110,', c2:'rgba(50,0,90,'},
+  {cx:.52,cy:.12,rx:.22,ry:.14,rot:.1, c1:'rgba(0,55,80,',  c2:'rgba(35,0,95,'},
+  {cx:.85,cy:.80,rx:.20,ry:.12,rot:.6, c1:'rgba(80,0,80,',  c2:'rgba(0,40,80,'},
+];
+const PLT={cx:.80,cy:.20,r:55};
+let shooters=[],lastSpawn=0,nextDelay=3+Math.random()*5;
+function spawnShooter(){
+  const angle=Math.PI/5+(Math.random()-.5)*.4;
+  shooters.push({x0:Math.random()*.7,y0:Math.random()*.35,angle,
+    len:90+Math.random()*130,life:0,dur:1.6+Math.random()*.8});
+}
+let lastT=0;
+function draw(ts){
+  const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;
+  const bg=ctx.createLinearGradient(0,0,W*.4,H);
+  bg.addColorStop(0,'#000610');bg.addColorStop(.5,'#020a1c');bg.addColorStop(1,'#010611');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  nebulae.forEach(n=>{
+    const nx=n.cx*W,ny=n.cy*H,nrx=n.rx*Math.min(W,H),nry=n.ry*Math.min(W,H);
+    ctx.save();ctx.translate(nx,ny);ctx.rotate(n.rot);ctx.scale(1,nry/nrx);
+    const g=ctx.createRadialGradient(0,0,0,0,0,nrx);
+    g.addColorStop(0,n.c1+'0.16)');g.addColorStop(.45,n.c2+'0.08)');g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,nrx,0,Math.PI*2);ctx.fill();ctx.restore();
+  });
+  {
+    const px=PLT.cx*W,py=PLT.cy*H,pr=PLT.r;
+    ctx.save();ctx.translate(px,py);ctx.rotate(-.28);ctx.scale(1,.28);
+    ctx.beginPath();ctx.arc(0,0,pr*2.1,0,Math.PI*2);ctx.strokeStyle='rgba(90,140,210,.18)';ctx.lineWidth=pr*.22;ctx.stroke();
+    ctx.beginPath();ctx.arc(0,0,pr*1.65,0,Math.PI*2);ctx.strokeStyle='rgba(110,160,230,.12)';ctx.lineWidth=pr*.14;ctx.stroke();ctx.restore();
+    const pg=ctx.createRadialGradient(px-pr*.3,py-pr*.3,pr*.08,px,py,pr);
+    pg.addColorStop(0,'#4b6fa8');pg.addColorStop(.4,'#1c3a60');pg.addColorStop(.85,'#0c1e34');pg.addColorStop(1,'#05101e');
+    ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fillStyle=pg;ctx.fill();
+    const atm=ctx.createRadialGradient(px,py,pr*.82,px,py,pr*1.35);
+    atm.addColorStop(0,'rgba(80,150,230,.16)');atm.addColorStop(1,'rgba(80,150,230,0)');
+    ctx.beginPath();ctx.arc(px,py,pr*1.35,0,Math.PI*2);ctx.fillStyle=atm;ctx.fill();
+  }
+  const t=ts/1000;
+  stars.forEach(s=>{
+    const f=.65+.35*Math.sin(t*s.speed+s.phase),op=s.base*f,sx=s.x*W,sy=s.y*H;
+    ctx.beginPath();ctx.arc(sx,sy,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,248,255,${op})`;ctx.fill();
+    if(s.r>1.3){
+      const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,s.r*4.5);
+      glow.addColorStop(0,`rgba(200,230,255,${op*.45})`);glow.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath();ctx.arc(sx,sy,s.r*4.5,0,Math.PI*2);ctx.fillStyle=glow;ctx.fill();
+    }
+  });
+  lastSpawn+=dt;
+  if(lastSpawn>=nextDelay){spawnShooter();lastSpawn=0;nextDelay=3+Math.random()*6;}
+  shooters=shooters.filter(ss=>ss.life<ss.dur);
+  shooters.forEach(ss=>{
+    ss.life+=dt;
+    const prog=ss.life/ss.dur,alpha=prog<.15?prog/.15:prog>.75?(1-prog)/.25:1;
+    const cx=(ss.x0+Math.cos(ss.angle)*prog*.55)*W,cy=(ss.y0+Math.sin(ss.angle)*prog*.35)*H;
+    const tail=ss.len*Math.min(prog*5,1),ex=cx-Math.cos(ss.angle)*tail,ey=cy-Math.sin(ss.angle)*tail;
+    const sg=ctx.createLinearGradient(ex,ey,cx,cy);
+    sg.addColorStop(0,'rgba(255,255,255,0)');sg.addColorStop(.6,`rgba(190,235,255,${alpha*.5})`);sg.addColorStop(1,`rgba(255,255,255,${alpha*.95})`);
+    ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(cx,cy);ctx.strokeStyle=sg;ctx.lineWidth=1.8;ctx.stroke();
+    const tip=ctx.createRadialGradient(cx,cy,0,cx,cy,7);
+    tip.addColorStop(0,`rgba(255,255,255,${alpha*.9})`);tip.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();ctx.arc(cx,cy,7,0,Math.PI*2);ctx.fillStyle=tip;ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+ 
+/* ── COCCINELLE ── */
+const bug=document.getElementById('cursor-bug');
+let bugAngle=0,targetAngle=0,prevMX=null,prevMY=null,moveTimer=null;
+function lerpAngle(a,b,t){let d=((b-a)%360+540)%360-180;return a+d*t;}
+(function bugLoop(){
+  bugAngle=lerpAngle(bugAngle,targetAngle,.16);
+  bug.style.transform=`rotate(${bugAngle}deg)`;
+  requestAnimationFrame(bugLoop);
+})();
+document.addEventListener('mousemove',e=>{
+  bug.style.left=e.clientX+'px'; bug.style.top=e.clientY+'px';
+  if(prevMX!==null){
+    const dx=e.clientX-prevMX,dy=e.clientY-prevMY;
+    if(Math.hypot(dx,dy)>2.5) targetAngle=Math.atan2(dy,dx)*180/Math.PI+90;
+  }
+  prevMX=e.clientX;prevMY=e.clientY;
+  bug.classList.add('is-flying');
+  clearTimeout(moveTimer);
+  moveTimer=setTimeout(()=>bug.classList.remove('is-flying'),150);
+});
+document.addEventListener('mouseleave',()=>{clearTimeout(moveTimer);bug.classList.remove('is-flying');bug.style.opacity='0';});
+document.addEventListener('mouseenter',()=>{bug.style.opacity='1';});
+</script>
+</body>
+</html>
